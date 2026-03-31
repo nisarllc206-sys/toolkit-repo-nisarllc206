@@ -1,0 +1,39 @@
+name: Python CI
+
+# Trigger events
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Jobs
+jobs:
+  build:
+    # Runner environment
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # Steps to execute
+    steps:
+      # Check out repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Run tests
+      - name: Run tests
+        run: |
+          pytest

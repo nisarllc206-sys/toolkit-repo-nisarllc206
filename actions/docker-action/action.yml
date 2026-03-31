@@ -1,0 +1,19 @@
+name: 'Docker Action Template'
+description: 'A reusable Docker-based GitHub Action template'
+author: 'nisarllc206'
+
+inputs:
+  message:
+    description: 'Message to echo inside the container'
+    required: false
+    default: 'Hello from Docker action!'
+
+outputs:
+  result:
+    description: 'Result message from the Docker container'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.message }}
