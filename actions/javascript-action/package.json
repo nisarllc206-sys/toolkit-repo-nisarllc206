@@ -1,0 +1,15 @@
+{
+  "name": "javascript-action",
+  "version": "1.0.0",
+  "description": "JavaScript GitHub Action template",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}

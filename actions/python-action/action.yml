@@ -1,0 +1,19 @@
+name: 'Python Action Template'
+description: 'A reusable Python-based GitHub Action template'
+author: 'nisarllc206'
+
+inputs:
+  name:
+    description: 'Name to greet'
+    required: false
+    default: 'World'
+
+outputs:
+  greeting:
+    description: 'The greeting message produced by this action'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.name }}

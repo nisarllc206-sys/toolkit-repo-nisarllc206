@@ -1,0 +1,17 @@
+name: 'JavaScript Action Template'
+description: 'A reusable JavaScript GitHub Action template'
+author: 'nisarllc206'
+
+inputs:
+  greeting:
+    description: 'Greeting message to display'
+    required: false
+    default: 'Hello, World!'
+
+outputs:
+  message:
+    description: 'The output message produced by this action'
+
+runs:
+  using: 'node20'
+  main: 'index.js'
