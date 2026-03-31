@@ -1,0 +1,22 @@
+const fs = require('fs-extra');
+const OpenAI = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+module.exports = async (req, res) => {
+  try {
+    const prompt = await fs.readFile('./prompts/master_prompt.txt', 'utf-8');
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4000
+    });
+
+    await fs.outputFile('./output/android_project/MainActivity.kt', completion.choices[0].message.content);
+
+    res.status(200).json({ message: 'Code generated successfully!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Code generation failed.' });
+  }
+};72ce3b59fec065ae2d17c6fcf832a1200512ed32

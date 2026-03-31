@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tools Directory – AI Creator SaaS</title>
+  <meta name="description" content="Browse 500+ AI tools for content creation, image generation, video, audio, SEO and more." />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+  <header class="nav-header">
+    <nav class="nav-container">
+      <div class="nav-logo">
+        <a href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit">
+          <span class="material-icons">auto_awesome</span>
+          <span>AI Creator SaaS</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#pricing">Pricing</a></li>
+        <li><a href="tools-directory.html" class="active">Tools</a></li>
+      </ul>
+      <div class="nav-auth">
+        <a href="dashboard.html" class="btn-text">Sign In</a>
+        <a href="dashboard.html" class="btn-filled">Get Started</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="tools-page">
+    <div class="tools-page-header">
+      <h1>AI Tools Directory</h1>
+      <p>Discover and explore the best AI tools for creators, marketers, and developers.</p>
+
+      <div class="tools-search-wrapper">
+        <span class="material-icons search-icon">search</span>
+        <input type="text" id="tools-search" class="tools-search-input" placeholder="Search 500+ AI tools..." oninput="filterTools()" />
+      </div>
+
+      <div class="category-chips">
+        <button class="chip active" onclick="setCategory('all', this)">All</button>
+        <button class="chip" onclick="setCategory('Writing', this)">✍️ Writing</button>
+        <button class="chip" onclick="setCategory('Image', this)">🎨 Image</button>
+        <button class="chip" onclick="setCategory('Video', this)">🎬 Video</button>
+        <button class="chip" onclick="setCategory('Audio', this)">🎵 Audio</button>
+        <button class="chip" onclick="setCategory('Marketing', this)">📊 Marketing</button>
+        <button class="chip" onclick="setCategory('SEO', this)">🔍 SEO</button>
+        <button class="chip" onclick="setCategory('Code', this)">💻 Code</button>
+        <button class="chip" onclick="setCategory('Productivity', this)">⚡ Productivity</button>
+      </div>
+
+      <div class="tools-filter-row">
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-free" onchange="filterTools()" />
+          <span>Free tools only</span>
+        </label>
+        <span id="tools-count" class="tools-count">Loading tools...</span>
+      </div>
+    </div>
+
+    <div class="tools-grid" id="tools-grid"></div>
+
+    <div class="pagination-container" id="pagination-container"></div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="../js/app.js"></script>
+  <script>
+    const TOOLS_DATA = [
+      { id: 1, name: 'ChatGPT', description: 'Advanced AI chatbot by OpenAI. Generate text, answer questions, write code, and more with GPT-4.', category: 'Writing', url: 'https://chat.openai.com', isFree: true, rating: 4.9, icon: '🤖', tags: ['chatbot', 'writing', 'gpt-4'] },
+      { id: 2, name: 'Midjourney', description: 'AI image generator creating stunning artistic visuals from text prompts.', category: 'Image', url: 'https://midjourney.com', isFree: false, rating: 4.8, icon: '🎨', tags: ['image', 'art', 'design'] },
+      { id: 3, name: 'DALL-E 3', description: 'OpenAI image generation model creating photorealistic and artistic images from descriptions.', category: 'Image', url: 'https://openai.com/dall-e-3', isFree: false, rating: 4.7, icon: '🖼️', tags: ['image', 'openai', 'generative'] },
+      { id: 4, name: 'Jasper AI', description: 'AI writing assistant for marketing copy, blog posts, and social media content at scale.', category: 'Marketing', url: 'https://jasper.ai', isFree: false, rating: 4.7, icon: '📝', tags: ['marketing', 'copywriting', 'content'] },
+      { id: 5, name: 'ElevenLabs', description: 'High-quality AI voice cloning and text-to-speech with realistic voices in multiple languages.', category: 'Audio', url: 'https://elevenlabs.io', isFree: true, rating: 4.8, icon: '🎵', tags: ['voice', 'tts', 'audio'] },
+      { id: 6, name: 'Runway ML', description: 'AI video generation and editing platform. Create videos from text and images.', category: 'Video', url: 'https://runwayml.com', isFree: true, rating: 4.6, icon: '🎬', tags: ['video', 'generation', 'editing'] },
+      { id: 7, name: 'Grammarly', description: 'AI-powered writing assistant that checks grammar, style, tone, and clarity.', category: 'Writing', url: 'https://grammarly.com', isFree: true, rating: 4.8, icon: '✅', tags: ['grammar', 'writing', 'proofreading'] },
+      { id: 8, name: 'Copy.ai', description: 'AI copywriting tool for sales copy, email campaigns, and social media posts.', category: 'Marketing', url: 'https://copy.ai', isFree: true, rating: 4.5, icon: '📢', tags: ['copywriting', 'marketing', 'sales'] },
+      { id: 9, name: 'Surfer SEO', description: 'AI-powered SEO tool for content optimization and keyword strategy.', category: 'SEO', url: 'https://surferseo.com', isFree: false, rating: 4.6, icon: '🔍', tags: ['seo', 'content', 'keywords'] },
+      { id: 10, name: 'GitHub Copilot', description: 'AI code completion and generation tool integrated into your IDE.', category: 'Code', url: 'https://github.com/features/copilot', isFree: false, rating: 4.7, icon: '💻', tags: ['code', 'github', 'autocomplete'] },
+      { id: 11, name: 'Stable Diffusion', description: 'Open-source image generation AI. Run locally or via API for unlimited generations.', category: 'Image', url: 'https://stability.ai', isFree: true, rating: 4.5, icon: '🌊', tags: ['image', 'open-source', 'diffusion'] },
+      { id: 12, name: 'Notion AI', description: 'AI writing and summarization built into the popular Notion productivity platform.', category: 'Productivity', url: 'https://notion.so', isFree: false, rating: 4.6, icon: '📓', tags: ['productivity', 'writing', 'notes'] },
+      { id: 13, name: 'Synthesia', description: 'Create professional AI avatar videos for training, marketing, and presentations.', category: 'Video', url: 'https://synthesia.io', isFree: false, rating: 4.5, icon: '🎭', tags: ['video', 'avatar', 'presentation'] },
+      { id: 14, name: 'Semrush', description: 'Comprehensive SEO and content marketing platform with AI writing assistant.', category: 'SEO', url: 'https://semrush.com', isFree: false, rating: 4.7, icon: '📈', tags: ['seo', 'marketing', 'analytics'] },
+      { id: 15, name: 'Claude', description: 'Anthropic AI assistant for writing, analysis, coding, and research with long context.', category: 'Writing', url: 'https://claude.ai', isFree: true, rating: 4.8, icon: '🧠', tags: ['chatbot', 'writing', 'analysis'] },
+      { id: 16, name: 'Perplexity AI', description: 'AI-powered search engine that provides sourced answers and research summaries.', category: 'Productivity', url: 'https://perplexity.ai', isFree: true, rating: 4.7, icon: '🔮', tags: ['search', 'research', 'ai'] },
+    ];
+
+    let currentCategory = 'all';
+    let currentPage = 1;
+    const PER_PAGE = 12;
+
+    function getFilteredTools() {
+      const search = (document.getElementById('tools-search')?.value || '').toLowerCase();
+      const freeOnly = document.getElementById('filter-free')?.checked;
+
+      return TOOLS_DATA.filter(tool => {
+        const matchCat = currentCategory === 'all' || tool.category === currentCategory;
+        const matchFree = !freeOnly || tool.isFree;
+        const matchSearch = !search ||
+          tool.name.toLowerCase().includes(search) ||
+          tool.description.toLowerCase().includes(search) ||
+          tool.tags.some(t => t.includes(search));
+        return matchCat && matchFree && matchSearch;
+      });
+    }
+
+    function renderTools() {
+      const filtered = getFilteredTools();
+      const start = (currentPage - 1) * PER_PAGE;
+      const page = filtered.slice(start, start + PER_PAGE);
+
+      document.getElementById('tools-count').textContent = `${filtered.length} tools found`;
+
+      const grid = document.getElementById('tools-grid');
+      if (!page.length) {
+        grid.innerHTML = '<div class="no-results"><span class="material-icons">search_off</span><p>No tools found</p></div>';
+        return;
+      }
+
+      grid.innerHTML = page.map(tool => `
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <div class="tool-emoji">${tool.icon}</div>
+            <div class="tool-badges">
+              <span class="badge badge-cat">${tool.category}</span>
+              ${tool.isFree ? '<span class="badge badge-free">Free</span>' : '<span class="badge badge-paid">Paid</span>'}
+            </div>
+          </div>
+          <h3 class="tool-card-name">${tool.name}</h3>
+          <p class="tool-card-desc">${tool.description}</p>
+          <div class="tool-card-footer">
+            <div class="tool-rating">⭐ ${tool.rating}</div>
+            <a href="${tool.url}" target="_blank" rel="noopener" class="btn-outlined btn-sm">Visit →</a>
+          </div>
+          <div class="tool-tags">
+            ${tool.tags.map(t => `<span class="tag">#${t}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      renderPagination(filtered.length);
+    }
+
+    function renderPagination(total) {
+      const pages = Math.ceil(total / PER_PAGE);
+      const container = document.getElementById('pagination-container');
+      if (pages <= 1) { container.innerHTML = ''; return; }
+
+      let html = '<div class="pagination">';
+      if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">← Prev</button>`;
+      for (let i = 1; i <= pages; i++) {
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      if (currentPage < pages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">Next →</button>`;
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function goPage(p) { currentPage = p; renderTools(); window.scrollTo(0,0); }
+    function filterTools() { currentPage = 1; renderTools(); }
+    function setCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      currentPage = 1;
+      renderTools();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderTools);
+  </script>
+</body>
+</html>
