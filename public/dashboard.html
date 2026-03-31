@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI PDF Super Toolkit — Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- AI Dashboard styles -->
+  <link rel="stylesheet" href="../frontend/css/ai-dashboard.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #11111b;
+      color: #cdd6f4;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .shell {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: #1e1e2e;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sidebar-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #cba6f7;
+      padding: 0 0.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 0.75rem;
+    }
+
+    .sidebar-logo span { font-weight: 400; color: #a6adc8; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #a6adc8;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(203,166,247,0.08);
+      color: #cba6f7;
+    }
+
+    /* ── Main content ── */
+    main {
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #cdd6f4;
+    }
+
+    .page-header p {
+      font-size: 0.875rem;
+      color: #a6adc8;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Grid ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #1e1e2e;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a6adc8;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Stat number ── */
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #a6adc8;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Generate form ── */
+    .gen-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .gen-form label {
+      font-size: 0.8rem;
+      color: #a6adc8;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .gen-form input,
+    .gen-form select,
+    .gen-form textarea {
+      width: 100%;
+      background: #11111b;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      color: #cdd6f4;
+      font-family: inherit;
+      font-size: 0.875rem;
+      padding: 0.6rem 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .gen-form input:focus,
+    .gen-form select:focus,
+    .gen-form textarea:focus {
+      border-color: #cba6f7;
+    }
+
+    .gen-form textarea { resize: vertical; min-height: 80px; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: #cba6f7;
+      color: #11111b;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: transparent;
+      color: #a6adc8;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,0.05); color: #cdd6f4; }
+
+    /* ── Output area ── */
+    #gen-output {
+      background: #11111b;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      min-height: 80px;
+      color: #cdd6f4;
+      white-space: pre-wrap;
+    }
+
+    #gen-output.placeholder { color: #585b70; font-style: italic; }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .badge-claude  { background: rgba(201,123,58,0.15); color: #c97b3a; }
+    .badge-openai  { background: rgba(16,163,127,0.15); color: #10a37f; }
+    .badge-auto    { background: rgba(99,102,241,0.15); color: #818cf8; }
+    .badge-cache   { background: rgba(166,227,161,0.15); color: #a6e3a1; }
+
+    /* ── Top-prompt table ── */
+    .top-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .top-table th {
+      text-align: left;
+      padding: 0.3rem 0.5rem;
+      color: #585b70;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .top-table td {
+      padding: 0.4rem 0.5rem;
+      color: #cdd6f4;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* ── Spinner ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(203,166,247,0.3);
+      border-top-color: #cba6f7;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">AI PDF Toolkit <span>v2.0</span></div>
+
+    <a class="nav-item active" href="#generate">⚡ Generate</a>
+    <a class="nav-item" href="#cache">📊 Cache Stats</a>
+    <a class="nav-item" href="#costs">💰 Cost Analysis</a>
+    <a class="nav-item" href="#preferences">⚙️ AI Preferences</a>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>AI Content Dashboard</h1>
+      <p>Multi-model AI generation with prompt caching &amp; cost optimisation</p>
+    </div>
+
+    <!-- ── Live Statistics Row ── -->
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Cache Hit Rate</div>
+        <div class="stat-num hit-rate-value" data-cache-rate style="color:#a6e3a1">—</div>
+        <div class="stat-label">of all requests served from cache</div>
+        <div class="hit-rate-bar" style="margin-top:0.75rem">
+          <div class="hit-rate-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Cost Saved (Cache)</div>
+        <div class="stat-num" data-cache-saved style="color:#fab387">$—</div>
+        <div class="stat-label">cumulative savings vs no-cache</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Active Prompts</div>
+        <div class="stat-num" data-cache-entries>—</div>
+        <div class="stat-label">cached system prompt entries</div>
+      </div>
+    </div>
+
+    <!-- ── AI Model Selector + Generator ── -->
+    <section id="generate">
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-title">AI Model Selection</div>
+
+        <div class="ai-model-selector">
+          <button class="ai-model-btn" data-ai-model="auto">
+            🤖 Auto (Intelligent)
+          </button>
+          <button class="ai-model-btn" data-ai-model="claude">
+            🟠 Claude Opus 4.6
+          </button>
+          <button class="ai-model-btn" data-ai-model="openai">
+            🟢 GPT-4 (OpenAI)
+          </button>
+        </div>
+
+        <p style="font-size:0.78rem;color:#a6adc8;margin-top:0.25rem">
+          <em>Auto</em> selects the best model for each content type and caches system prompts automatically.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <!-- Generator form -->
+        <div class="card">
+          <div class="card-title">Generate Content</div>
+          <div class="gen-form">
+            <div>
+              <label for="contentType">Content Type</label>
+              <select id="contentType">
+                <option value="blog_post">Blog Post</option>
+                <option value="social_caption">Social Caption</option>
+                <option value="pdf_analysis">PDF Analysis</option>
+                <option value="email">Email</option>
+              </select>
+            </div>
+            <div>
+              <label for="topicInput">Topic / Prompt</label>
+              <textarea id="topicInput" placeholder="e.g. The impact of AI on healthcare…"></textarea>
+            </div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+              <button class="btn-primary" id="btnGenerate">
+                <span id="btnSpinner" style="display:none" class="spinner"></span>
+                Generate
+              </button>
+              <button class="btn-secondary" id="btnCompare">Compare Both</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="card">
+          <div class="card-title" style="display:flex;align-items:center;gap:0.5rem">
+            Output
+            <span id="modelBadge" class="badge badge-auto" style="display:none"></span>
+            <span id="cacheBadge" class="badge badge-cache" style="display:none">⚡ Cache Hit</span>
+          </div>
+          <div id="gen-output" class="placeholder">Generated content will appear here…</div>
+          <div id="gen-meta" class="generation-meta" style="display:none">
+            <span>Tokens: <strong id="metaTokens">—</strong></span>
+            <span>Cost: <strong id="metaCost">—</strong></span>
+            <span>Time: <strong id="metaTime">—</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Cache Statistics ── -->
+    <section id="cache">
+      <div class="card" style="margin-bottom:1.25rem">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Cache Performance</span>
+          <button class="btn-secondary" id="btnClearCache">🗑 Clear Cache</button>
+        </div>
+
+        <div class="cache-metrics">
+          <div class="cache-metric">
+            <div class="cache-metric-value" data-cache-total>—</div>
+            <div class="cache-metric-label">Total Requests</div>
+          </div>
+          <div class="cache-metric">
+            <div class="cache-metric-value hit" data-cache-hits>—</div>
+            <div class="cache-metric-label">Cache Hits</div>
+          </div>
+          <div class="cache-metric">
+            <div class="cache-metric-value miss" data-cache-misses>—</div>
+            <div class="cache-metric-label">Cache Misses</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Top Cached Prompts</div>
+        <table class="top-table">
+          <thead>
+            <tr>
+              <th>Prompt Type</th>
+              <th>Hits</th>
+              <th>Tokens Saved</th>
+              <th>Cost Saved</th>
+            </tr>
+          </thead>
+          <tbody data-cache-top-body>
+            <tr><td colspan="4" style="color:#585b70;font-style:italic">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Cost Analysis ── -->
+    <section id="costs" style="margin-top:1.25rem">
+      <div class="card">
+        <div class="card-title">Cost Comparison — 5 Requests (2 000-token blog post)</div>
+
+        <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-end">
+          <!-- Bar chart -->
+          <div style="flex:0 0 auto">
+            <div class="cost-comparison" style="align-items:flex-end;height:140px">
+              <div class="cost-bar-wrap">
+                <div data-bar-claude-val style="font-size:0.75rem;color:#c97b3a">—</div>
+                <div class="cost-bar claude" style="width:60px;height:0px"></div>
+                <div class="cost-bar-label">Claude + Cache</div>
+              </div>
+              <div class="cost-bar-wrap">
+                <div data-bar-openai-val style="font-size:0.75rem;color:#10a37f">—</div>
+                <div class="cost-bar openai" style="width:60px;height:0px"></div>
+                <div class="cost-bar-label">OpenAI</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Numbers -->
+          <div style="flex:1;min-width:180px">
+            <div style="margin-bottom:0.6rem">
+              <div style="font-size:0.75rem;color:#a6adc8">Claude (per request)</div>
+              <div style="font-weight:700" data-cost-claude-single>—</div>
+            </div>
+            <div style="margin-bottom:0.6rem">
+              <div style="font-size:0.75rem;color:#a6adc8">OpenAI (per request)</div>
+              <div style="font-weight:700" data-cost-openai-single>—</div>
+            </div>
+            <div style="margin-bottom:0.6rem">
+              <div style="font-size:0.75rem;color:#a6adc8">Claude with caching (5×)</div>
+              <div style="font-weight:700;color:#c97b3a" data-cost-claude-cached>—</div>
+            </div>
+            <div style="margin-bottom:0.6rem">
+              <div style="font-size:0.75rem;color:#a6adc8">Savings vs OpenAI</div>
+              <div style="font-weight:700;color:#a6e3a1" data-cost-savings-abs>—</div>
+              <div style="font-size:0.75rem;color:#a6e3a1" data-cost-savings-pct></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Preferences Panel ── -->
+    <section id="preferences" style="margin-top:1.25rem">
+      <div class="card">
+        <div class="card-title">AI Preferences</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem;max-width:400px">
+          <div>
+            <label style="font-size:0.8rem;color:#a6adc8;display:block;margin-bottom:0.35rem">
+              Default AI Model
+            </label>
+            <div class="ai-model-selector">
+              <button class="ai-model-btn" data-ai-model="auto">Auto</button>
+              <button class="ai-model-btn" data-ai-model="claude">Claude</button>
+              <button class="ai-model-btn" data-ai-model="openai">OpenAI</button>
+            </div>
+          </div>
+
+          <label style="display:flex;align-items:center;gap:0.6rem;font-size:0.875rem;cursor:pointer">
+            <input type="checkbox" id="cachingToggle" checked />
+            Enable prompt caching
+          </label>
+
+          <label style="display:flex;align-items:center;gap:0.6rem;font-size:0.875rem;cursor:pointer">
+            <input type="checkbox" id="costOptToggle" checked />
+            Cost optimisation mode
+          </label>
+
+          <button class="btn-primary" id="btnSavePrefs" style="align-self:flex-start">
+            Save Preferences
+          </button>
+          <p id="prefsMsg" style="font-size:0.8rem;color:#a6e3a1;display:none">✅ Saved!</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── Scripts ── -->
+<script>
+  // Expose API base so modules can use it.
+  window.AI_API_BASE = '/api/ai';
+</script>
+<script src="../frontend/js/ai-preferences.js"></script>
+<script src="../frontend/js/cache-monitor.js"></script>
+<script src="../frontend/js/cost-analyzer.js"></script>
+
+<script>
+/* ── Generate content ── */
+const btnGenerate = document.getElementById('btnGenerate');
+const btnCompare  = document.getElementById('btnCompare');
+const btnClearCache = document.getElementById('btnClearCache');
+const btnSavePrefs  = document.getElementById('btnSavePrefs');
+const btnSpinner  = document.getElementById('btnSpinner');
+const genOutput   = document.getElementById('gen-output');
+const modelBadge  = document.getElementById('modelBadge');
+const cacheBadge  = document.getElementById('cacheBadge');
+const genMeta     = document.getElementById('gen-meta');
+
+function setLoading(on) {
+  btnSpinner.style.display = on ? 'inline-block' : 'none';
+  btnGenerate.disabled = on;
+  btnCompare.disabled  = on;
+}
+
+function renderResult(data) {
+  genOutput.classList.remove('placeholder');
+  genOutput.textContent = data.content || JSON.stringify(data, null, 2);
+
+  const model = data.model || data.selectedModel || 'auto';
+  modelBadge.textContent = model.toUpperCase();
+  modelBadge.className   = `badge badge-${model}`;
+  modelBadge.style.display = 'inline-block';
+
+  cacheBadge.style.display = data.cacheHit ? 'inline-block' : 'none';
+
+  if (data.tokens) {
+    document.getElementById('metaTokens').textContent =
+      `${data.tokens.input}↑ / ${data.tokens.output}↓` +
+      (data.tokens.cacheRead ? ` (${data.tokens.cacheRead} cached)` : '');
+    document.getElementById('metaCost').textContent = `$${(data.cost || 0).toFixed(6)}`;
+    document.getElementById('metaTime').textContent = `${(data.responseTime || 0).toFixed(2)}s`;
+    genMeta.style.display = 'flex';
+  }
+}
+
+btnGenerate.addEventListener('click', async () => {
+  const topic = document.getElementById('topicInput').value.trim();
+  const contentType = document.getElementById('contentType').value;
+  const model = window.aiPreferences ? window.aiPreferences.current : 'auto';
+
+  if (!topic) { alert('Please enter a topic or prompt.'); return; }
+
+  setLoading(true);
+  genOutput.classList.add('placeholder');
+  genOutput.textContent = 'Generating…';
+
+  try {
+    const res = await fetch('/api/ai/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, contentType, model }),
+    });
+    const data = await res.json();
+    renderResult(data);
+  } catch (err) {
+    genOutput.textContent = '⚠ Error: ' + err.message;
+  } finally {
+    setLoading(false);
+  }
+});
+
+btnCompare.addEventListener('click', async () => {
+  const topic = document.getElementById('topicInput').value.trim();
+  const contentType = document.getElementById('contentType').value;
+
+  if (!topic) { alert('Please enter a topic or prompt.'); return; }
+
+  setLoading(true);
+  genOutput.classList.add('placeholder');
+  genOutput.textContent = 'Comparing both models…';
+
+  try {
+    const res = await fetch('/api/ai/generate/compare', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, contentType }),
+    });
+    const data = await res.json();
+    genOutput.classList.remove('placeholder');
+    genOutput.textContent = JSON.stringify({
+      recommendation: data.recommendation,
+      claude:  { cost: data.claude?.cost, tokens: data.claude?.tokens?.output },
+      openai:  { cost: data.openai?.cost, tokens: data.openai?.tokens?.output },
+      'claude-preview': (data.claude?.content || '').slice(0, 200) + '…',
+    }, null, 2);
+    modelBadge.style.display = 'none';
+    cacheBadge.style.display = 'none';
+    genMeta.style.display = 'none';
+  } catch (err) {
+    genOutput.textContent = '⚠ Error: ' + err.message;
+  } finally {
+    setLoading(false);
+  }
+});
+
+/* ── Clear cache ── */
+btnClearCache.addEventListener('click', async () => {
+  if (!confirm('Clear the prompt cache?')) return;
+  await fetch('/api/ai/cache', { method: 'DELETE' });
+  if (window.cacheMonitor) window.cacheMonitor._refresh();
+});
+
+/* ── Save preferences ── */
+btnSavePrefs.addEventListener('click', async () => {
+  const model = window.aiPreferences ? window.aiPreferences.current : 'auto';
+  const cachingEnabled = document.getElementById('cachingToggle').checked;
+  const costOptimization = document.getElementById('costOptToggle').checked;
+
+  await fetch('/api/ai/preferences', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ preferredModel: model, cachingEnabled, costOptimization }),
+  });
+
+  const msg = document.getElementById('prefsMsg');
+  msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; }, 2500);
+});
+</script>
+
+</body>
+</html>

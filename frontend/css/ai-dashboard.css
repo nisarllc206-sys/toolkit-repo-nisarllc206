@@ -1,0 +1,267 @@
+/* ─── AI Dashboard Styles ────────────────────────────────────────────────── */
+
+:root {
+  --ai-claude: #c97b3a;
+  --ai-openai: #10a37f;
+  --ai-auto: #6366f1;
+  --ai-surface: #1e1e2e;
+  --ai-border: rgba(255, 255, 255, 0.08);
+  --ai-text: #cdd6f4;
+  --ai-subtext: #a6adc8;
+  --cache-hit: #a6e3a1;
+  --cache-miss: #f38ba8;
+  --cost-savings: #a6e3a1;
+}
+
+/* ─── Model Selector ─────────────────────────────────────────────────────── */
+
+.ai-model-selector {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.ai-model-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  background: var(--ai-surface);
+  color: var(--ai-text);
+}
+
+.ai-model-btn:hover {
+  transform: translateY(-1px);
+}
+
+.ai-model-btn.active-claude {
+  background: rgba(201, 123, 58, 0.15);
+  border-color: var(--ai-claude);
+  color: var(--ai-claude);
+}
+
+.ai-model-btn.active-openai {
+  background: rgba(16, 163, 127, 0.15);
+  border-color: var(--ai-openai);
+  color: var(--ai-openai);
+}
+
+.ai-model-btn.active-auto {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--ai-auto);
+  color: var(--ai-auto);
+}
+
+/* ─── Cache Performance Card ─────────────────────────────────────────────── */
+
+.cache-stats-card {
+  background: var(--ai-surface);
+  border: 1px solid var(--ai-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cache-stats-card h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ai-subtext);
+  margin: 0 0 1rem;
+}
+
+.cache-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.cache-metric {
+  text-align: center;
+}
+
+.cache-metric-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ai-text);
+  line-height: 1;
+}
+
+.cache-metric-label {
+  font-size: 0.75rem;
+  color: var(--ai-subtext);
+  margin-top: 0.3rem;
+}
+
+.cache-metric-value.hit  { color: var(--cache-hit); }
+.cache-metric-value.miss { color: var(--cache-miss); }
+.cache-metric-value.save { color: var(--cost-savings); }
+
+/* ─── Hit-rate Progress Bar ──────────────────────────────────────────────── */
+
+.hit-rate-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.hit-rate-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ai-auto), var(--ai-openai));
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+/* ─── Cost Comparison Chart ──────────────────────────────────────────────── */
+
+.cost-comparison {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  padding: 1rem 0;
+}
+
+.cost-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cost-bar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  min-height: 4px;
+  transition: height 0.5s ease;
+}
+
+.cost-bar.claude { background: var(--ai-claude); }
+.cost-bar.openai { background: var(--ai-openai); }
+
+.cost-bar-label {
+  font-size: 0.75rem;
+  color: var(--ai-subtext);
+}
+
+.cost-bar-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ai-text);
+}
+
+/* ─── Quality Badge ──────────────────────────────────────────────────────── */
+
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(166, 227, 161, 0.15);
+  color: var(--cache-hit);
+}
+
+/* ─── TTL Indicator ──────────────────────────────────────────────────────── */
+
+.ttl-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--ai-subtext);
+}
+
+.ttl-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cache-hit);
+  animation: pulse-ttl 2s infinite;
+}
+
+.ttl-dot.expiring {
+  background: #fab387;
+}
+
+@keyframes pulse-ttl {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ─── Real-time Stats Ticker ─────────────────────────────────────────────── */
+
+.stats-ticker {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+}
+
+.stats-ticker::-webkit-scrollbar { display: none; }
+
+.ticker-item {
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--ai-subtext);
+}
+
+.ticker-item strong {
+  color: var(--ai-text);
+  font-weight: 700;
+}
+
+/* ─── Generation Result Card ─────────────────────────────────────────────── */
+
+.generation-result {
+  border: 1px solid var(--ai-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  position: relative;
+}
+
+.generation-result .model-tag {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.model-tag.claude {
+  background: rgba(201, 123, 58, 0.2);
+  color: var(--ai-claude);
+}
+
+.model-tag.openai {
+  background: rgba(16, 163, 127, 0.2);
+  color: var(--ai-openai);
+}
+
+.generation-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: var(--ai-subtext);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ai-border);
+}
