@@ -1,0 +1,65 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize AI & Database
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get('file') as File;
+    const userId = formData.get('userId') as string;
+
+    if (!file) return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+
+    // 1. Check Usage Limit (Free Users: 5 credits)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('ai_credits')
+      .eq('id', userId)
+      .single();
+
+    if (profile && profile.ai_credits <= 0) {
+      return NextResponse.json({ error: "Limit Reached. Upgrade to Pro!" }, { status: 402 });
+    }
+
+    // 2. Read File Content
+    const arrayBuffer = await file.arrayBuffer();
+    const base64Data = Buffer.from(arrayBuffer).toString('base64');
+
+    // 3. AI Processing (Using Gemini 1.5 Flash for Speed)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
+    const prompt = "Analyze this file. If it is a PDF, summarize it in 5 bullet points. If it is an image, describe it and extract any text you see. Format as professional Markdown.";
+
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: file.type
+        }
+      }
+    ]);
+
+    const aiResponse = result.response.text();
+
+    // 4. Deduct Credit in Supabase
+    await supabase.rpc('decrement_credits', { user_id: userId });
+
+    return NextResponse.json({ 
+      success: true, 
+      type: file.type, 
+      summary: aiResponse 
+    });
+
+  } catch (error: any) {
+    console.error(error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
