@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "env": {
+    "OPENAI_API_KEY": "@openai_api_key",
+    "WHATSAPP_TOKEN": "@whatsapp_token",
+    "PHONE_NUMBER_ID": "@phone_number_id",
+    "VERIFY_TOKEN": "@verify_token"
+  }
+}
