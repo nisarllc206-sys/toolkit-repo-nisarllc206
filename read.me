@@ -1,0 +1,358 @@
+ai-pdf-super-generator
+│
+├── api
+│   └── generator.js            # Node.js API route to trigger AI code generation
+├── prompts
+│   └── master_prompt.txt       # Master prompt for AI code generation
+├── output
+│   ├── android_project/        # Generated Android code
+│   ├── backend/                 # Generated backend code
+│   └── website/                 # Generated website code
+├── package.json                 # Node.js dependencies
+├── vercel.json                  # Vercel configuration for serverless function
+├── README.md                    # Instructions & setup
+└── .gitignore                   # node_modules, output/{
+  "version": 2,
+  "builds": [
+    { "src": "api/generator.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/generate", "dest": "/api/generator.js" }
+  ]
+}{
+  "name": "ai-pdf-super-generator",
+  "version": "1.0.0",
+  "main": "api/generator.js",
+  "dependencies": {
+    "openai": "^4.0.0",
+    "fs-extra": "^11.1.0"
+  },
+  "scripts": {
+    "start": "node api/generator.js"
+  }
+}const fs = require('fs-extra');
+const OpenAI = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+module.exports = async (req, res) => {
+  try {
+    const prompt = await fs.readFile('./prompts/master_prompt.txt', 'utf-8');
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 4000
+    });
+
+    await fs.outputFile('./output/android_project/MainActivity.kt', completion.choices[0].message.content);
+
+    res.status(200).json({ message: 'Code generated successfully!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Code generation failed.' });
+  }
+};import { useState, useRef, useEffect, useCallback } from "react";
+
+/* ─── Google Fonts ─────────────────────────────────────────────────────────── */
+const FontLoader = () => {
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.href = "https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }, []);
+  return null;
+};
+
+/* ─── QR Code Generator (Pure Canvas) ─────────────────────────────────────── */
+function generateQRMatrix(text) {
+  // Simple QR-like visual pattern using text hash for demo
+  const size = 21;
+  const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+  // Finder patterns
+  const setFinder = (r, c) => {
+    for (let i = 0; i < 7; i++) for (let j = 0; j < 7; j++) {
+      if (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4))
+        matrix[r + i][c + j] = 1;
+    }
+  };
+  setFinder(0, 0); setFinder(0, 14); setFinder(14, 0);
+  // Data modules from text hash
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+  for (let i = 8; i < 13; i++) for (let j = 8; j < 13; j++) {
+    matrix[i][j] = ((hash >> ((i * 5 + j) % 32)) & 1);
+  }
+  for (let i = 2; i < 19; i++) for (let j = 2; j < 19; j++) {
+    if (matrix[i][j] === 0 && Math.random() < 0.4) {
+      const bit = ((hash >> ((i * 7 + j * 3) % 32)) & 1);
+      if (!(i < 8 && j < 8) && !(i < 8 && j > 13) && !(i > 13 && j < 8))
+        matrix[i][j] = bit;
+    }
+  }
+  return matrix;
+}
+
+function QRCanvas({ text, size = 200 }) {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    if (!canvasRef.current || !text) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const matrix = generateQRMatrix(text);
+    const cellSize = size / 21;
+    ctx.fillStyle = "#0a0a0f";
+    ctx.fillRect(0, 0, size, size);
+    matrix.forEach((row, i) => row.forEach((cell, j) => {
+      if (cell) {
+        ctx.fillStyle = "#00f5ff";
+        ctx.shadowColor = "#00f5ff";
+        ctx.shadowBlur = 4;
+        ctx.fillRect(j * cellSize, i * cellSize, cellSize - 0.5, cellSize - 0.5);
+      }
+    }));
+  }, [text, size]);
+  return <canvas ref={canvasRef} width={size} height={size} style={{ borderRadius: 8 }} />;
+}
+
+/* ─── Constants ────────────────────────────────────────────────────────────── */
+const TOOLS = [
+  { id: "ai-chat",      icon: "🤖", label: "AI Chat",         cat: "AI",    desc: "GPT-4 powered assistant" },
+  { id: "ai-text",      icon: "✍️", label: "AI Text Gen",     cat: "AI",    desc: "Generate any content" },
+  { id: "ai-summary",   icon: "📋", label: "Doc Summary",      cat: "AI",    desc: "Summarize documents" },
+  { id: "ai-improve",   icon: "💎", label: "AI Writing",       cat: "AI",    desc: "Improve your writing" },
+  { id: "ocr",          icon: "👁️", label: "OCR Scanner",      cat: "OCR",   desc: "Extract text from image" },
+  { id: "pdf-info",     icon: "📄", label: "PDF Reader",       cat: "PDF",   desc: "Read & analyze PDFs" },
+  { id: "pdf-merge",    icon: "🔗", label: "Merge PDF",        cat: "PDF",   desc: "Combine PDF files" },
+  { id: "pdf-compress", icon: "🗜️", label: "Compress PDF",     cat: "PDF",   desc: "Reduce PDF size" },
+  { id: "qr-gen",       icon: "📱", label: "QR Generator",     cat: "QR",    desc: "Create QR codes" },
+  { id: "qr-scan",      icon: "🔍", label: "QR Scanner",       cat: "QR",    desc: "Decode QR from image" },
+  { id: "img-compress", icon: "🖼️", label: "Img Compressor",   cat: "MEDIA", desc: "Compress images" },
+  { id: "img-convert",  icon: "🔄", label: "Format Convert",   cat: "MEDIA", desc: "Convert image format" },
+  { id: "file-mgr",     icon: "📁", label: "File Manager",     cat: "FILES", desc: "Manage your files" },
+  { id: "zip",          icon: "📦", label: "Zip Tool",         cat: "FILES", desc: "Zip & unzip files" },
+  { id: "img-pdf",      icon: "🖼️➡️📄", label: "Image→PDF",   cat: "PDF",   desc: "Convert images to PDF" },
+  { id: "pdf-split",    icon: "✂️", label: "Split PDF",        cat: "PDF",   desc: "Split PDF pages" },
+  { id: "pdf-rotate",   icon: "🔃", label: "Rotate PDF",       cat: "PDF",   desc: "Rotate PDF pages" },
+  { id: "watermark",    icon: "💧", label: "Watermark",        cat: "PDF",   desc: "Add watermark" },
+  { id: "img-video",    icon: "🎬", label: "Image→Video",      cat: "MEDIA", desc: "Create slideshow video" },
+  { id: "vid-img",      icon: "🎞️", label: "Video→Image",      cat: "MEDIA", desc: "Extract video frames" },
+];
+
+const CAT_COLORS = {
+  AI: "#00f5ff", PDF: "#a855f7", OCR: "#f59e0b", QR: "#10b981", MEDIA: "#f43f5e", FILES: "#6366f1"
+};
+
+/* ─── Claude API Call ──────────────────────────────────────────────────────── */
+async function callClaude(messages, system = "") {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: system || "You are a helpful AI assistant inside the AI PDF Super Toolkit app. Be concise and practical.",
+      messages,
+    }),
+  });
+  const data = await response.json();
+  return data.content?.[0]?.text || "No response";
+}
+
+/* ─── CSS Styles ───────────────────────────────────────────────────────────── */
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bg:#030712;--surface:#0d1117;--surface2:#161b22;--border:#1f2937;
+    --cyan:#00f5ff;--purple:#a855f7;--gold:#f59e0b;--green:#10b981;
+    --red:#f43f5e;--text:#e2e8f0;--muted:#64748b;
+    --glow-cyan:0 0 20px rgba(0,245,255,0.4);
+    --glow-purple:0 0 20px rgba(168,85,247,0.4);
+  }
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;}
+  ::-webkit-scrollbar{width:4px;}
+  ::-webkit-scrollbar-track{background:#0d1117;}
+  ::-webkit-scrollbar-thumb{background:#00f5ff44;border-radius:4px;}
+
+  @keyframes scanline{0%{transform:translateY(-100%);}100%{transform:translateY(100vh);}}
+  @keyframes pulse-border{0%,100%{opacity:0.4;}50%{opacity:1;}}
+  @keyframes glitch{0%,100%{transform:translateX(0);}20%{transform:translateX(-2px);}40%{transform:translateX(2px);}60%{transform:translateX(-1px);}}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  @keyframes appear{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+  @keyframes neon-flicker{0%,100%{opacity:1;}92%{opacity:1;}93%{opacity:0.4;}95%{opacity:1;}97%{opacity:0.7;}99%{opacity:1;}}
+  @keyframes progress-bar{from{width:0%;}to{width:var(--target-w,60%);}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+
+  .app{min-height:100vh;display:flex;flex-direction:column;position:relative;overflow-x:hidden;}
+  .scanline{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(transparent,#00f5ff22,transparent);animation:scanline 8s linear infinite;pointer-events:none;z-index:999;}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+  /* ── Header ── */
+  .header{position:sticky;top:0;z-index:100;background:rgba(3,7,18,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,245,255,0.15);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:18px;color:var(--cyan);text-shadow:var(--glow-cyan);animation:neon-flicker 4s infinite;letter-spacing:2px;cursor:pointer;}
+  .logo span{color:var(--purple);}
+  .nav-pills{display:flex;gap:4px;}
+  .nav-pill{padding:6px 14px;border-radius:6px;border:1px solid transparent;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--muted);letter-spacing:1px;}
+  .nav-pill:hover{color:var(--cyan);border-color:rgba(0,245,255,0.3);}
+  .nav-pill.active{color:var(--cyan);border-color:var(--cyan);background:rgba(0,245,255,0.08);box-shadow:var(--glow-cyan);}
+  .header-right{display:flex;align-items:center;gap:12px;}
+  .stat-badge{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);padding:4px 10px;border-radius:4px;}
+
+  /* ── Main Content ── */
+  .main{flex:1;position:relative;z-index:1;padding:24px;}
+
+  /* ── Dashboard ── */
+  .dash-hero{text-align:center;padding:40px 0 32px;animation:appear 0.6s ease;}
+  .dash-title{font-family:'Orbitron',monospace;font-size:clamp(28px,5vw,52px);font-weight:900;background:linear-gradient(135deg,#00f5ff,#a855f7,#00f5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:12px;}
+  .dash-sub{font-size:16px;color:var(--muted);font-weight:400;letter-spacing:1px;}
+  .dash-stats{display:flex;justify-content:center;gap:32px;margin:24px 0;}
+  .dash-stat{text-align:center;}
+  .dash-stat-num{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:var(--cyan);}
+  .dash-stat-label{font-size:12px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+
+  .cat-filter{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0 28px;}
+  .cat-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--muted);}
+  .cat-btn:hover{color:var(--text);border-color:var(--muted);}
+  .cat-btn.active{border-color:currentColor;background:rgba(0,245,255,0.08);}
+
+  .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;max-width:1200px;margin:0 auto;}
+  .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 16px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;animation:appear 0.4s ease both;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
+  .tool-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(0,245,255,0.03));opacity:0;transition:opacity 0.3s;}
+  .tool-card:hover{border-color:rgba(0,245,255,0.5);transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,245,255,0.15);}
+  .tool-card:hover::before{opacity:1;}
+  .tool-card:active{transform:translateY(-2px);}
+  .tool-icon{font-size:28px;line-height:1;animation:float 3s ease-in-out infinite;}
+  .tool-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);letter-spacing:0.5px;}
+  .tool-desc{font-size:11px;color:var(--muted);}
+  .tool-cat-dot{width:6px;height:6px;border-radius:50%;position:absolute;top:10px;right:10px;}
+
+  /* ── Tool Panel ── */
+  .panel{max-width:860px;margin:0 auto;animation:appear 0.4s ease;}
+  .panel-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;}
+  .back-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--cyan);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;}
+  .back-btn:hover{border-color:var(--cyan);background:rgba(0,245,255,0.1);}
+  .panel-title{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--cyan);}
+  .panel-subtitle{font-size:13px;color:var(--muted);margin-top:2px;}
+
+  /* ── Cards / Surfaces ── */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .card-glow{border-color:rgba(0,245,255,0.3);box-shadow:inset 0 0 40px rgba(0,245,255,0.03);}
+  .section-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+
+  /* ── Inputs ── */
+  .input, .textarea, select.input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;outline:none;transition:border-color 0.2s;}
+  .input:focus,.textarea:focus{border-color:rgba(0,245,255,0.5);box-shadow:0 0 0 3px rgba(0,245,255,0.08);}
+  .textarea{resize:vertical;min-height:120px;line-height:1.6;}
+  .input::placeholder,.textarea::placeholder{color:var(--muted);}
+  select.input option{background:#0d1117;}
+
+  /* ── Buttons ── */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 24px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;border:none;outline:none;white-space:nowrap;}
+  .btn-primary{background:linear-gradient(135deg,#00c8d4,#0099a8);color:#000;box-shadow:0 4px 20px rgba(0,245,255,0.3);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,245,255,0.45);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .btn-secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text);}
+  .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
+  .btn-ghost{background:transparent;border:1px solid rgba(0,245,255,0.3);color:var(--cyan);}
+  .btn-ghost:hover{background:rgba(0,245,255,0.08);}
+  .btn-danger{background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.4);color:#f43f5e;}
+  .btn-sm{padding:7px 16px;font-size:13px;}
+
+  /* ── Chat ── */
+  .chat-window{height:440px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;}
+  .msg{max-width:80%;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6;animation:slideIn 0.3s ease;}
+  .msg-user{align-self:flex-end;background:linear-gradient(135deg,rgba(0,180,200,0.25),rgba(0,120,140,0.15));border:1px solid rgba(0,245,255,0.2);border-radius:12px 12px 2px 12px;}
+  .msg-ai{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 12px 2px;}
+  .msg-ai .msg-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);margin-bottom:4px;}
+  .msg-user .msg-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--purple);margin-bottom:4px;text-align:right;}
+  .chat-input-row{display:flex;gap:10px;}
+  .typing-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:pulse-border 1s ease-in-out infinite;}
+  .typing-dot:nth-child(2){animation-delay:0.2s;}
+  .typing-dot:nth-child(3){animation-delay:0.4s;}
+
+  /* ── Upload Zone ── */
+  .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--surface2);}
+  .upload-zone:hover,.upload-zone.drag-over{border-color:var(--cyan);background:rgba(0,245,255,0.04);}
+  .upload-icon{font-size:40px;margin-bottom:12px;display:block;}
+  .upload-label{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+  .upload-sub{font-size:12px;color:var(--muted);}
+
+  /* ── Result Box ── */
+  .result-box{background:var(--surface2);border:1px solid rgba(0,245,255,0.2);border-radius:10px;padding:16px;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;max-height:340px;overflow-y:auto;color:#b2f5ea;}
+  .result-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+
+  /* ── QR ── */
+  .qr-container{display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px;background:var(--surface2);border:1px solid rgba(0,245,255,0.2);border-radius:12px;}
+  .qr-frame{padding:12px;background:#0a0a0f;border:2px solid var(--cyan);border-radius:12px;box-shadow:var(--glow-cyan);}
+
+  /* ── File Item ── */
+  .file-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;animation:slideIn 0.3s ease;}
+  .file-icon{font-size:24px;width:36px;text-align:center;flex-shrink:0;}
+  .file-info{flex:1;min-width:0;}
+  .file-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .file-meta{font-size:11px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace;}
+  .file-actions{display:flex;gap:6px;flex-shrink:0;}
+
+  /* ── Progress ── */
+  .progress-bar-wrap{background:var(--surface2);border-radius:100px;height:8px;overflow:hidden;margin-top:8px;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:100px;transition:width 0.6s ease;}
+
+  /* ── Tags ── */
+  .tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.5px;}
+
+  /* ── Stats row ── */
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:16px 0;}
+  .stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+  .stat-card-num{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;}
+  .stat-card-label{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:0.5px;}
+
+  /* ── Switch ── */
+  .switch-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+  .switch-label{font-size:14px;font-weight:600;}
+  .switch-desc{font-size:12px;color:var(--muted);}
+  .toggle{width:44px;height:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;cursor:pointer;position:relative;transition:all 0.2s;}
+  .toggle.on{background:linear-gradient(90deg,#00c8d4,#0099a8);border-color:var(--cyan);}
+  .toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.2s;}
+  .toggle.on::after{transform:translateX(20px);}
+
+  /* ── Responsive ── */
+  @media(max-width:600px){
+    .header{padding:0 12px;}
+    .nav-pills{display:none;}
+    .main{padding:12px;}
+    .tools-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+    .dash-stats{gap:16px;}
+    .panel{padding:0;}
+    .chat-window{height:320px;}
+  }
+`;
+
+/* ─── Sub-tools that need stubs ──────────────────────────────────────────────── */
+const STUB_TOOLS = ["pdf-merge","pdf-compress","pdf-split","pdf-rotate","watermark","img-pdf","img-video","vid-img","zip","file-mgr","img-convert","qr-scan"];
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TOOL COMPONENTS
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── AI Chat ── */
+function AIChatTool() {
+  const [messages, setMessages] = useState([
+    { role: "ai", text: "Assalam o Alaikum! I'm your AI assistant powered by Claude. Ask me anything — summarize documents, write content, answer questions, or just chat. How can I help you today? 🚀" }
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [system, setSystem] = useState("helpful assistant");
+  const chatRef = useRef(null);
+
+  useEffect(() => {
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+  }, [messages, loading]);
+
+  const send = async () => {
+    const text = input.trim(); if (!text || loading) return;
+    const userMsg = { role: "user", text };
+    setMessages(m => [...m, userMsg]);
+    setInput(""); setLoading
