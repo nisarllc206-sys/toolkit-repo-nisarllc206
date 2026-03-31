@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI PDF Super Toolkit — 100+ AI PDF Tools | Nexus Ultra Platforms</title>
+<meta name="description" content="The most powerful AI PDF toolkit. Merge, split, compress, OCR, chat with PDFs, convert and more — on Android and Web. Free to start.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --bg:       #020408;
+  --s1:       #060B12;
+  --s2:       #091018;
+  --s3:       #0D1620;
+  --s4:       #121D2A;
+  --s5:       #172435;
+  --amber:    #FF8C00;
+  --amber2:   rgba(255,140,0,.08);
+  --amber3:   rgba(255,140,0,.18);
+  --amber4:   rgba(255,140,0,.35);
+  --amberL:   #FFA333;
+  --cyan:     #00CFFF;
+  --cyan2:    rgba(0,207,255,.07);
+  --cyan3:    rgba(0,207,255,.18);
+  --green:    #00E676;
+  --green2:   rgba(0,230,118,.08);
+  --green3:   rgba(0,230,118,.18);
+  --purple:   #A855F7;
+  --purple2:  rgba(168,85,247,.09);
+  --red:      #FF4560;
+  --t1:       #F0F4FF;
+  --t2:       #7A91B0;
+  --t3:       #3A4F68;
+  --t4:       #1C2D40;
+  --bd:       rgba(255,140,0,.09);
+  --bd2:      rgba(255,140,0,.2);
+  --bd3:      rgba(255,140,0,.38);
+  --mono: 'JetBrains Mono', monospace;
+  --disp: 'Orbitron', monospace;
+  --body: 'Manrope', sans-serif;
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--s1); }
+::-webkit-scrollbar-thumb { background: var(--amber3); border-radius: 2px; }
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: .4;
+}
+
+/* ─── GRID BACKGROUND ─── */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,140,0,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,140,0,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 80%);
+  pointer-events: none;
+}
+
+/* ─── GLOW ─── */
+.glow-amber {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 900;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: rgba(2,4,8,.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--bd);
+  transition: background .3s;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.nav-logo-box {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  background: var(--amber2);
+  border: 1px solid var(--amber3);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.nav-logo-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, var(--amber3));
+}
+.nav-logo-ico {
+  font-family: var(--disp);
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--amber);
+  letter-spacing: 1px;
+}
+.nav-brand {
+  font-family: var(--disp);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--t1);
+}
+.nav-brand span { color: var(--amber); }
+.nav-links {
+  display: flex;
+  gap: 28px;
+  flex: 1;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--t2);
+  transition: color .15s;
+  letter-spacing: .3px;
+}
+.nav-links a:hover { color: var(--t1); }
+.nav-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.gh-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--s3);
+  border: 1px solid var(--t4);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--t2);
+  transition: .15s;
+}
+.gh-badge:hover { border-color: var(--t3); color: var(--t1); }
+.gh-badge .star { color: var(--amber); }
+.btn-nav-outline {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  color: var(--amber);
+  border: 1px solid var(--amber3);
+  background: transparent;
+  cursor: pointer;
+  transition: .14s;
+  text-transform: uppercase;
+}
+.btn-nav-outline:hover { background: var(--amber2); }
+.btn-nav-solid {
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: #000;
+  background: var(--amber);
+  border: none;
+  cursor: pointer;
+  transition: .14s;
+  text-transform: uppercase;
+}
+.btn-nav-solid:hover { background: var(--amberL); transform: translateY(-1px); }
+
+/* ─── SECTIONS ─── */
+section { position: relative; overflow: hidden; }
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 32px 80px;
+  text-align: center;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--amber2);
+  border: 1px solid var(--amber3);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  animation: fadeUp .6s ease forwards;
+  opacity: 0;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(.7); }
+}
+.hero-h1 {
+  font-family: var(--disp);
+  font-size: clamp(38px, 6vw, 82px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  color: var(--t1);
+  margin-bottom: 20px;
+  animation: fadeUp .6s .1s ease forwards;
+  opacity: 0;
+  max-width: 900px;
+}
+.hero-h1 .accent { color: var(--amber); }
+.hero-h1 .accent-c { color: var(--cyan); }
+.hero-sub {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--t2);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  animation: fadeUp .6s .2s ease forwards;
+  opacity: 0;
+}
+.hero-sub strong { color: var(--t1); font-weight: 600; }
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+  animation: fadeUp .6s .3s ease forwards;
+  opacity: 0;
+}
+.btn-hero-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  background: var(--amber);
+  color: #000;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all .14s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-hero-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,.15));
+}
+.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,140,0,.35); background: var(--amberL); }
+.btn-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--t1);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border: 1px solid var(--t4);
+  cursor: pointer;
+  transition: all .14s;
+}
+.btn-hero-secondary:hover { border-color: var(--t3); background: var(--s3); transform: translateY(-2px); }
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  background: #25D366;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all .14s;
+  text-decoration: none;
+}
+.btn-whatsapp:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(37,211,102,.35); }
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  animation: fadeUp .6s .4s ease forwards;
+  opacity: 0;
+  margin-bottom: 64px;
+}
+.h-stat { text-align: center; }
+.h-stat-val {
+  font-family: var(--disp);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--amber);
+  display: block;
+  line-height: 1;
+}
+.h-stat-lbl {
+  font-size: 11px;
+  color: var(--t2);
+  margin-top: 4px;
+  font-family: var(--mono);
+  letter-spacing: .5px;
+}
+.h-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--t4);
+  align-self: center;
+}
+
+/* ─── PDF HERO VISUAL ─── */
+.pdf-hero-visual {
+  position: relative;
+  width: 680px;
+  max-width: 100%;
+  margin: 0 auto;
+  animation: fadeUp .7s .5s ease forwards;
+  opacity: 0;
+}
+.pdf-card-main {
+  background: var(--s2);
+  border: 1px solid var(--bd2);
+  border-radius: 20px;
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(255,140,0,.12), 0 0 0 1px var(--bd);
+}
+.pdf-card-main::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+}
+.pdf-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--bd);
+}
+.pdf-dots { display: flex; gap: 5px; }
+.pdf-dot { width: 10px; height: 10px; border-radius: 50%; }
+.pdf-dot:nth-child(1) { background: #FF5F57; }
+.pdf-dot:nth-child(2) { background: #FEBC2E; }
+.pdf-dot:nth-child(3) { background: #28C840; }
+.pdf-file-name {
+  flex: 1;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--t2);
+  background: var(--s3);
+  border-radius: 6px;
+  padding: 4px 12px;
+}
+.pdf-actions-row {
+  display: flex;
+  gap: 6px;
+}
+.pdf-action-chip {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: .12s;
+}
+.pac-a { background: var(--amber2); color: var(--amber); border: 1px solid var(--amber3); }
+.pac-a:hover { background: var(--amber3); }
+.pac-c { background: var(--cyan2); color: var(--cyan); border: 1px solid var(--cyan3); }
+.pac-g { background: var(--green2); color: var(--green); border: 1px solid var(--green3); }
+.pdf-content-area {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 16px;
+}
+.pdf-preview {
+  background: var(--s3);
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+.pdf-lines { display: flex; flex-direction: column; gap: 8px; }
+.pdf-line {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--s5);
+  animation: shimmer 2s ease infinite;
+}
+.pdf-line:nth-child(1) { width: 90%; animation-delay: 0s; }
+.pdf-line:nth-child(2) { width: 78%; animation-delay: .1s; }
+.pdf-line:nth-child(3) { width: 95%; animation-delay: .2s; }
+.pdf-line:nth-child(4) { width: 60%; animation-delay: .3s; }
+.pdf-line:nth-child(5) { width: 85%; animation-delay: .4s; }
+.pdf-line:nth-child(6) { width: 72%; animation-delay: .5s; }
+.pdf-line:nth-child(7) { width: 88%; animation-delay: .6s; }
+.pdf-highlight {
+  position: absolute;
+  top: 60px; left: 20px; right: 20px;
+  height: 24px;
+  border-radius: 3px;
+  background: rgba(255,140,0,.15);
+  border: 1px solid var(--amber3);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 6px;
+}
+.ph-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
+.ph-txt { font-family: var(--mono); font-size: 9px; color: var(--amber); }
+.pdf-ai-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ai-chat-mini {
+  background: var(--s3);
+  border-radius: 12px;
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.ai-chat-mini::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan3), transparent);
+}
+.ai-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ai-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); animation: pulse-dot 1.5s infinite; }
+.ai-msg {
+  background: var(--s4);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 10px;
+  color: var(--t2);
+  line-height: 1.5;
+}
+.ai-msg.user { background: var(--amber2); color: var(--amber); font-family: var(--mono); font-size: 9px; }
+.ai-msg.bot { border-left: 2px solid var(--cyan); }
+.ai-typing {
+  display: flex;
+  gap: 3px;
+  padding: 4px 8px;
+}
+.ai-typing span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: typing 1.2s ease infinite;
+}
+.ai-typing span:nth-child(2) { animation-delay: .15s; }
+.ai-typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes typing { 0%,60%,100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+.ocr-mini {
+  background: var(--s3);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.ocr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.ocr-lbl { font-family: var(--mono); font-size: 8px; color: var(--green); letter-spacing: 1px; text-transform: uppercase; }
+.ocr-score {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--green);
+  background: var(--green2);
+  border: 1px solid var(--green3);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.ocr-lines { display: flex; flex-direction: column; gap: 4px; }
+.ocr-line {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--s4);
+}
+
+/* ─── FLOATING TOOL BADGES ─── */
+.float-badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 40px;
+  background: var(--s2);
+  border: 1px solid var(--bd2);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t1);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  white-space: nowrap;
+  animation: floatBadge var(--dur, 4s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+.float-badge .fb-ico { font-size: 16px; }
+.float-badge.fb-amber { border-color: var(--amber3); }
+.float-badge.fb-cyan { border-color: var(--cyan3); }
+.float-badge.fb-green { border-color: var(--green3); }
+@keyframes floatBadge {
+  0%,100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+}
+@keyframes shimmer {
+  0%,100% { opacity: .5; }
+  50% { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── MARQUEE ─── */
+.marquee-section {
+  padding: 24px 0;
+  background: var(--s1);
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  gap: 32px;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--t3);
+  letter-spacing: .5px;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.marquee-item .m-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--amber); opacity: .6; }
+.marquee-item.hi { color: var(--amber); }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* ─── SECTION COMMON ─── */
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 32px;
+}
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--amber);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--amber);
+}
+.section-h2 {
+  font-family: var(--disp);
+  font-size: clamp(28px, 4vw, 50px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.5px;
+  color: var(--t1);
+  margin-bottom: 16px;
+}
+.section-h2 .a { color: var(--amber); }
+.section-h2 .c { color: var(--cyan); }
+.section-sub {
+  font-size: 17px;
+  color: var(--t2);
+  line-height: 1.7;
+  max-width: 520px;
+}
+
+/* ─── TOOLS SECTION ─── */
+#tools { background: linear-gradient(180deg, var(--bg) 0%, var(--s1) 100%); }
+.tools-categories {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+.cat-chip {
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: .14s;
+  border: 1px solid transparent;
+}
+.cat-chip.active { background: var(--amber); color: #000; }
+.cat-chip:not(.active) { background: var(--s3); color: var(--t2); border-color: var(--t4); }
+.cat-chip:not(.active):hover { border-color: var(--amber3); color: var(--amber); }
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.tool-card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  padding: 20px 18px;
+  cursor: pointer;
+  transition: all .18s;
+  position: relative;
+  overflow: hidden;
+  group: true;
+}
+.tool-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber3), transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.tool-card:hover {
+  border-color: var(--bd2);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(255,140,0,.08);
+}
+.tool-card:hover::before { opacity: 1; }
+.tool-ico-wrap {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.tw-a { background: var(--amber2); border: 1px solid var(--amber3); }
+.tw-c { background: var(--cyan2); border: 1px solid var(--cyan3); }
+.tw-g { background: var(--green2); border: 1px solid var(--green3); }
+.tw-p { background: var(--purple2); border: 1px solid rgba(168,85,247,.2); }
+.tool-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 4px;
+}
+.tool-desc {
+  font-size: 11px;
+  color: var(--t2);
+  line-height: 1.5;
+}
+.tool-tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.tt-a { background: var(--amber2); color: var(--amber); border: 1px solid var(--amber3); }
+.tt-c { background: var(--cyan2); color: var(--cyan); border: 1px solid var(--cyan3); }
+.tt-g { background: var(--green2); color: var(--green); border: 1px solid var(--green3); }
+.tt-p { background: var(--purple2); color: var(--purple); border: 1px solid rgba(168,85,247,.25); }
+
+/* ─── TOOLS COUNT ─── */
+.tools-count-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--bd);
+}
+.tc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--t2);
+}
+.tc-num {
+  font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--amber);
+}
+.tc-sep { color: var(--t4); font-size: 18px; }
+
+/* ─── AI FEATURES ─── */
+#ai-features { background: var(--s1); }
+.ai-feat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 56px;
+}
+.ai-feat-card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  padding: 28px 28px 0;
+  overflow: hidden;
+  position: relative;
+  transition: .2s;
+}
+.ai-feat-card:hover { border-color: var(--bd2); }
+.ai-feat-card.big { grid-row: span 2; }
+.afc-eyebrow {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--amber);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.afc-title {
+  font-family: var(--disp);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.afc-desc {
+  font-size: 13px;
+  color: var(--t2);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  max-width: 340px;
+}
+
+/* Chat feature */
+.chat-demo {
+  background: var(--s3);
+  border-radius: 12px 12px 0 0;
+  padding: 16px;
+  border: 1px solid var(--bd);
+  border-bottom: none;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cdemo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--bd);
+}
+.cdemo-ai-ico {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff; font-family: var(--mono);
+}
+.cdemo-name { font-family: var(--mono); font-size: 10px; color: var(--cyan); font-weight: 600; }
+.cdemo-badge {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--green);
+  background: var(--green2);
+  border: 1px solid var(--green3);
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: .5px;
+}
+.chat-bubble-wrap { display: flex; flex-direction: column; gap: 8px; }
+.cb-user {
+  align-self: flex-end;
+  max-width: 80%;
+  background: var(--amber2);
+  border: 1px solid var(--amber3);
+  border-radius: 10px 10px 2px 10px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--amber);
+  font-family: var(--mono);
+}
+.cb-ai {
+  align-self: flex-start;
+  max-width: 90%;
+  background: var(--s4);
+  border: 1px solid var(--bd);
+  border-radius: 10px 10px 10px 2px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--t1);
+  line-height: 1.6;
+}
+.cb-ai .highlight { color: var(--amber); font-weight: 600; }
+
+/* OCR demo */
+.ocr-demo {
+  background: var(--s3);
+  border-radius: 12px 12px 0 0;
+  border: 1px solid var(--bd);
+  border-bottom: none;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+.ocr-img-side {
+  width: 100px;
+  flex-shrink: 0;
+  background: var(--s4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  min-height: 120px;
+}
+.ocr-result-side { flex: 1; }
+.ocr-r-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--green);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.ocr-r-lines { display: flex; flex-direction: column; gap: 5px; }
+.ocr-r-line {
+  height: 9px;
+  border-radius: 4px;
+  background: var(--s5);
+}
+.ocr-r-line.lit { background: rgba(0,230,118,.2); }
+.ocr-conf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--green2);
+  border: 1px solid var(--green3);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--green);
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* Convert demo */
+.convert-demo {
+  background: var(--s3);
+  border-radius: 12px 12px 0 0;
+  border: 1px solid var(--bd);
+  border-bottom: none;
+  padding: 16px;
+}
+.convert-flow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  padding: 16px 0;
+}
+.cf-file {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.cf-icon {
+  width: 48px; height: 60px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 1px solid var(--t4);
+  background: var(--s4);
+  position: relative;
+}
+.cf-ext {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.cf-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.cfa-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--amber);
+}
+.cfa-bar { width: 40px; height: 2px; background: linear-gradient(90deg, var(--amber3), var(--amber)); border-radius: 1px; }
+.cfa-head { color: var(--amber); font-size: 12px; }
+.convert-types {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  justify-content: center;
+}
+.ct-badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+}
+.ctb-a { background: var(--amber2); color: var(--amber); border: 1px solid var(--amber3); }
+.ctb-c { background: var(--cyan2); color: var(--cyan); border: 1px solid var(--cyan3); }
+.ctb-g { background: var(--green2); color: var(--green); border: 1px solid var(--green3); }
+.ctb-p { background: var(--purple2); color: var(--purple); border: 1px solid rgba(168,85,247,.25); }
+
+/* ─── PLATFORM ─── */
+#platform { background: linear-gradient(180deg, var(--s1) 0%, var(--bg) 100%); }
+.platform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 56px;
+}
+.platform-card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 24px;
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: .2s;
+}
+.platform-card:hover { border-color: var(--bd2); transform: translateY(-2px); }
+.platform-card.android { border-top: 2px solid var(--amber); }
+.platform-card.web { border-top: 2px solid var(--cyan); }
+.pc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.pcb-a { background: var(--amber2); color: var(--amber); border: 1px solid var(--amber3); }
+.pcb-c { background: var(--cyan2); color: var(--cyan); border: 1px solid var(--cyan3); }
+.pc-title {
+  font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--t1);
+  margin-bottom: 10px;
+}
+.pc-desc {
+  font-size: 14px;
+  color: var(--t2);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.pc-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+.pc-feat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--t1);
+}
+.pf-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.pf-a { background: var(--amber); }
+.pf-c { background: var(--cyan); }
+.pc-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: .14s;
+  border: none;
+}
+.pcc-a { background: var(--amber); color: #000; }
+.pcc-a:hover { background: var(--amberL); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,140,0,.3); }
+.pcc-c { background: var(--cyan); color: #000; }
+.pcc-c:hover { background: #33D9FF; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,207,255,.3); }
+
+/* Phone mockup */
+.phone-mockup {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 140px;
+}
+.phone-frame {
+  background: var(--s3);
+  border: 2px solid var(--t4);
+  border-radius: 24px;
+  padding: 8px;
+  box-shadow: -20px 20px 60px rgba(0,0,0,.5);
+}
+.phone-screen {
+  background: var(--bg);
+  border-radius: 17px;
+  height: 220px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 8px;
+}
+.ps-notch { height: 14px; background: var(--s3); border-radius: 0 0 8px 8px; width: 50%; margin: 0 auto 4px; }
+.ps-tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.ps-tool { background: var(--s2); border: 1px solid var(--bd); border-radius: 7px; padding: 7px 5px; text-align: center; }
+.pst-ico { font-size: 14px; }
+.pst-lbl { font-size: 7px; color: var(--t2); margin-top: 2px; font-family: var(--mono); }
+
+/* Browser mockup */
+.browser-mockup {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  width: 200px;
+}
+.browser-frame {
+  background: var(--s3);
+  border: 1px solid var(--t4);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: -20px 20px 60px rgba(0,0,0,.5);
+}
+.browser-bar {
+  background: var(--s4);
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--t4);
+}
+.browser-dots { display: flex; gap: 3px; }
+.bd-dot { width: 7px; height: 7px; border-radius: 50%; }
+.browser-url {
+  flex: 1;
+  background: var(--s3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--cyan);
+}
+.browser-content { padding: 8px; }
+.bc-line { height: 6px; border-radius: 3px; background: var(--s5); margin-bottom: 4px; }
+
+/* ─── PRICING ─── */
+#pricing { background: var(--s1); }
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
+  margin-bottom: 48px;
+}
+.toggle-label { font-size: 13px; color: var(--t2); font-weight: 500; }
+.toggle-track {
+  width: 44px; height: 22px;
+  border-radius: 11px;
+  background: var(--amber);
+  position: relative;
+  cursor: pointer;
+}
+.toggle-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #000;
+  position: absolute;
+  top: 3px; right: 3px;
+  transition: .2s;
+}
+.save-badge {
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: var(--amber2);
+  color: var(--amber);
+  border: 1px solid var(--amber3);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.price-card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  padding: 28px 24px;
+  position: relative;
+  transition: .2s;
+}
+.price-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.price-card.featured {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px var(--amber3), 0 24px 60px rgba(255,140,0,.15);
+}
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--amber);
+  color: #000;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: 20px;
+  letter-spacing: .8px;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.pc-plan {
+  font-family: var(--disp);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+.pc-price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.pc-price {
+  font-family: var(--disp);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--t1);
+}
+.pc-price-period {
+  font-size: 13px;
+  color: var(--t2);
+}
+.pc-price-note {
+  font-size: 11px;
+  color: var(--t3);
+  margin-bottom: 20px;
+  font-family: var(--mono);
+}
+.pc-divider { height: 1px; background: var(--bd); margin-bottom: 20px; }
+.pc-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.pc-feat-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--t2);
+  line-height: 1.5;
+}
+.pfi-check {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--green2);
+  border: 1px solid var(--green3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px;
+  color: var(--green);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pfi-check.amber-check {
+  background: var(--amber2);
+  border-color: var(--amber3);
+  color: var(--amber);
+}
+.btn-price {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: .14s;
+  border: none;
+}
+.bp-outline { background: transparent; color: var(--t1); border: 1px solid var(--t4); }
+.bp-outline:hover { border-color: var(--amber3); color: var(--amber); background: var(--amber2); }
+.bp-amber { background: var(--amber); color: #000; }
+.bp-amber:hover { background: var(--amberL); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,140,0,.3); }
+
+/* ─── TESTIMONIALS ─── */
+#testimonials { background: linear-gradient(180deg, var(--s1) 0%, var(--bg) 100%); }
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 56px;
+}
+.testi-card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: 20px;
+  padding: 28px;
+  position: relative;
+  transition: .2s;
+}
+.testi-card:hover { border-color: var(--bd2); transform: translateY(-2px); }
+.testi-stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.star { color: var(--amber); font-size: 14px; }
+.testi-quote {
+  font-size: 14px;
+  color: var(--t1);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-style: italic;
+  opacity: .9;
+}
+.testi-quote::before { content: '"'; color: var(--amber); font-size: 24px; font-family: var(--disp); line-height: 0; vertical-align: -10px; }
+.testi-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--bd);
+}
+.ta-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.ta-av-a { background: var(--amber2); border: 1px solid var(--amber3); color: var(--amber); }
+.ta-av-c { background: var(--cyan2); border: 1px solid var(--cyan3); color: var(--cyan); }
+.ta-av-g { background: var(--green2); border: 1px solid var(--green3); color: var(--green); }
+.ta-name { font-weight: 700; font-size: 13px; color: var(--t1); }
+.ta-role { font-size: 11px; color: var(--t2); margin-top: 2px; font-family: var(--mono); }
+.testi-tag {
+  position: absolute;
+  top: 20px; right: 20px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.tt-android { background: var(--amber2); color: var(--amber); border: 1px solid var(--amber3); }
+.tt-web { background: var(--cyan2); color: var(--cyan); border: 1px solid var(--cyan3); }
+
+/* ─── CTA ─── */
+#cta {
+  background: var(--bg);
+  padding: 0;
+}
+.cta-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 32px 100px;
+}
+.cta-box {
+  background: var(--s1);
+  border: 1px solid var(--bd2);
+  border-radius: 28px;
+  padding: 72px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--amber), var(--cyan), transparent);
+}
+.cta-glow {
+  position: absolute;
+  width: 400px; height: 200px;
+  background: radial-gradient(ellipse, rgba(255,140,0,.12), transparent);
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.cta-h2 {
+  font-family: var(--disp);
+  font-size: clamp(26px, 4vw, 48px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -.5px;
+  color: var(--t1);
+  margin-bottom: 16px;
+  position: relative;
+}
+.cta-h2 span { color: var(--amber); }
+.cta-sub {
+  font-size: 16px;
+  color: var(--t2);
+  margin-bottom: 36px;
+  position: relative;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cta-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  margin-bottom: 32px;
+}
+.cta-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--t3);
+  letter-spacing: .5px;
+  position: relative;
+}
+.cta-note .free { color: var(--green); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--s1);
+  border-top: 1px solid var(--bd);
+  padding: 60px 32px 32px;
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 280px 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.footer-desc {
+  font-size: 13px;
+  color: var(--t2);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.footer-repos { display: flex; flex-direction: column; gap: 8px; }
+.repo-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--t2);
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  transition: .12s;
+}
+.repo-link:hover { border-color: var(--amber3); color: var(--amber); }
+.repo-link code { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--amber); }
+.footer-col-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--t3);
+  margin-bottom: 16px;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-links a { font-size: 13px; color: var(--t2); transition: .12s; }
+.footer-links a:hover { color: var(--amber); }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid var(--bd);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-copy {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--t3);
+}
+.footer-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.footer-tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--t3);
+  border: 1px solid var(--t4);
+  letter-spacing: .5px;
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-box">
+      <span class="nav-logo-ico">PDF</span>
+    </div>
+    <span class="nav-brand">AI<span>.</span>PDF</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#ai-features">AI Features</a></li>
+    <li><a href="#platform">Platform</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="https://github.com/nisarllc206-sys/Ai-pdf-super-toolkit-">GitHub</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="https://github.com/nisarllc206-sys/Ai-pdf-super-toolkit-" class="gh-badge">
+      <span>☆</span>
+      <span class="star">★ 1.2k</span>
+    </a>
+    <button class="btn-nav-outline">Sign In</button>
+    <button class="btn-nav-solid">Download App ↓</button>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="glow-amber" style="width:600px;height:300px;background:radial-gradient(ellipse,rgba(255,140,0,.12),transparent);left:50%;top:30%;transform:translate(-50%,-50%)"></div>
+
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    Module 1 — Nexus Ultra Platforms
+  </div>
+
+  <h1 class="hero-h1">
+    100+ <span class="accent">AI PDF Tools.</span><br>
+    One <span class="accent-c">Supercharged</span> Platform.
+  </h1>
+
+  <p class="hero-sub">
+    Merge, split, compress, convert, <strong>chat with any PDF using Claude AI</strong>,
+    OCR scan documents, generate QR codes and more — on <strong>Android and Web</strong>.
+    Free to start.
+  </p>
+
+  <div class="hero-ctas">
+    <button class="btn-hero-primary">
+      ↓ Download Free · Android
+    </button>
+    <button class="btn-hero-secondary">
+      → Try Web PWA
+    </button>
+    <a href="https://github.com/nisarllc206-sys/Ai-pdf-super-toolkit-" class="btn-hero-secondary">
+      ⌥ View on GitHub
+    </a>
+    <a href="https://wa.me/923408060167" class="btn-whatsapp" target="_blank" rel="noopener noreferrer">
+      💬 WhatsApp Us
+    </a>
+  </div>
+    <div class="h-stat">
+      <span class="h-stat-val">100+</span>
+      <span class="h-stat-lbl">PDF Tools</span>
+    </div>
+    <div class="h-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-val">78K</span>
+      <span class="h-stat-lbl">Downloads</span>
+    </div>
+    <div class="h-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-val">4.6★</span>
+      <span class="h-stat-lbl">Play Store</span>
+    </div>
+    <div class="h-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-val">98%</span>
+      <span class="h-stat-lbl">OCR Accuracy</span>
+    </div>
+    <div class="h-divider"></div>
+    <div class="h-stat">
+      <span class="h-stat-val">$0</span>
+      <span class="h-stat-lbl">To Start</span>
+    </div>
+  </div>
+
+  <!-- PDF Hero Visual -->
+  <div class="pdf-hero-visual">
+    <!-- Floating badges -->
+    <div class="float-badge fb-amber" style="top:-28px;left:-40px;--dur:3.8s;--delay:0s;--rot:-3deg">
+      <span class="fb-ico">⊞</span> Merge PDF
+    </div>
+    <div class="float-badge fb-cyan" style="top:-20px;right:-30px;--dur:4.2s;--delay:.8s;--rot:2deg">
+      <span class="fb-ico">⬡</span> AI Chat
+    </div>
+    <div class="float-badge fb-green" style="bottom:40px;left:-50px;--dur:4.5s;--delay:.4s;--rot:-2deg">
+      <span class="fb-ico">◎</span> OCR 98.4%
+    </div>
+    <div class="float-badge" style="bottom:60px;right:-40px;--dur:3.6s;--delay:1.2s;--rot:3deg;border-color:rgba(168,85,247,.3)">
+      <span class="fb-ico">⇄</span> Convert
+    </div>
+
+    <!-- Main PDF card -->
+    <div class="pdf-card-main">
+      <div class="pdf-topbar">
+        <div class="pdf-dots">
+          <div class="pdf-dot"></div>
+          <div class="pdf-dot"></div>
+          <div class="pdf-dot"></div>
+        </div>
+        <div class="pdf-file-name">business_plan_2024.pdf · 42 pages · 2.4MB</div>
+        <div class="pdf-actions-row">
+          <span class="pdf-action-chip pac-a">Merge</span>
+          <span class="pdf-action-chip pac-c">AI Chat</span>
+          <span class="pdf-action-chip pac-g">OCR</span>
+        </div>
+      </div>
+      <div class="pdf-content-area">
+        <div class="pdf-preview">
+          <div class="pdf-highlight">
+            <span class="ph-dot"></span>
+            <span class="ph-txt">AI Detected: Key metrics on this page</span>
+          </div>
+          <div class="pdf-lines" style="margin-top:36px">
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+            <div class="pdf-line"></div>
+          </div>
+        </div>
+        <div class="pdf-ai-panel">
+          <div class="ai-chat-mini">
+            <div class="ai-label">
+              <span class="ai-dot"></span> Claude AI
+            </div>
+            <div class="ai-msg user">What are the revenue streams?</div>
+            <div class="ai-msg bot">
+              Found <span style="color:var(--amber);font-weight:600">4 streams</span>: SaaS (65%), Marketplace (12%), AdMob (15%), API (8%)
+            </div>
+            <div class="ai-typing">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="ocr-mini">
+            <div class="ocr-header">
+              <span class="ocr-lbl">OCR Active</span>
+              <span class="ocr-score">98.4%</span>
+            </div>
+            <div class="ocr-lines">
+              <div class="ocr-line" style="width:100%"></div>
+              <div class="ocr-line" style="width:85%"></div>
+              <div class="ocr-line" style="width:92%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee">
+    <span class="marquee-item hi"><span class="m-dot"></span>Merge PDF</span>
+    <span class="marquee-item"><span class="m-dot"></span>Split PDF</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>AI Chat with PDF</span>
+    <span class="marquee-item"><span class="m-dot"></span>OCR Extract</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>Compress PDF</span>
+    <span class="marquee-item"><span class="m-dot"></span>PDF → Word</span>
+    <span class="marquee-item"><span class="m-dot"></span>PDF → Excel</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>Image Compress</span>
+    <span class="marquee-item"><span class="m-dot"></span>QR Generator</span>
+    <span class="marquee-item"><span class="m-dot"></span>Watermark PDF</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>e-Signature</span>
+    <span class="marquee-item"><span class="m-dot"></span>ZIP/Unzip</span>
+    <span class="marquee-item"><span class="m-dot"></span>BG Remover AI</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>PDF Analyzer</span>
+    <span class="marquee-item"><span class="m-dot"></span>Video Convert</span>
+    <span class="marquee-item"><span class="m-dot"></span>Encrypt PDF</span>
+    <!-- duplicate for infinite loop -->
+    <span class="marquee-item hi"><span class="m-dot"></span>Merge PDF</span>
+    <span class="marquee-item"><span class="m-dot"></span>Split PDF</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>AI Chat with PDF</span>
+    <span class="marquee-item"><span class="m-dot"></span>OCR Extract</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>Compress PDF</span>
+    <span class="marquee-item"><span class="m-dot"></span>PDF → Word</span>
+    <span class="marquee-item"><span class="m-dot"></span>PDF → Excel</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>Image Compress</span>
+    <span class="marquee-item"><span class="m-dot"></span>QR Generator</span>
+    <span class="marquee-item"><span class="m-dot"></span>Watermark PDF</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>e-Signature</span>
+    <span class="marquee-item"><span class="m-dot"></span>ZIP/Unzip</span>
+    <span class="marquee-item"><span class="m-dot"></span>BG Remover AI</span>
+    <span class="marquee-item hi"><span class="m-dot"></span>PDF Analyzer</span>
+    <span class="marquee-item"><span class="m-dot"></span>Video Convert</span>
+    <span class="marquee-item"><span class="m-dot"></span>Encrypt PDF</span>
+  </div>
+</div>
+
+<!-- ─── TOOLS ─── -->
+<section id="tools">
+  <div class="section-inner">
+    <div class="section-eyebrow">Tools Library</div>
+    <h2 class="section-h2">Everything you need<br>to <span class="a">master PDF</span> work</h2>
+    <p class="section-sub">Every tool you need — PDF operations, AI analysis, file conversion, media processing, QR, and utilities. All in one app.</p>
+
+    <div class="tools-categories" style="margin-top:40px">
+      <span class="cat-chip active">All Tools</span>
+      <span class="cat-chip">PDF Ops</span>
+      <span class="cat-chip">AI Powered</span>
+      <span class="cat-chip">Convert</span>
+      <span class="cat-chip">Media</span>
+      <span class="cat-chip">Utilities</span>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-a"><span style="font-size:20px">⊞</span></div>
+        <div class="tool-name">Merge PDFs</div>
+        <div class="tool-desc">Combine unlimited PDFs in any order with drag-and-drop reordering</div>
+        <span class="tool-tag tt-a">PDF OPS</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-c"><span style="font-size:20px">⬡</span></div>
+        <div class="tool-name">AI PDF Chat</div>
+        <div class="tool-desc">Chat with any PDF using Claude AI — Q&A, summaries, data extraction</div>
+        <span class="tool-tag tt-c">AI</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-a"><span style="font-size:20px">◎</span></div>
+        <div class="tool-name">Compress PDF</div>
+        <div class="tool-desc">Smart compression preserves quality while reducing file size up to 80%</div>
+        <span class="tool-tag tt-a">PDF OPS</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-g"><span style="font-size:20px">◈</span></div>
+        <div class="tool-name">OCR Extract</div>
+        <div class="tool-desc">98.4% accuracy OCR enhanced by Claude AI — 50+ languages supported</div>
+        <span class="tool-tag tt-g">AI</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-p"><span style="font-size:20px">⇄</span></div>
+        <div class="tool-name">PDF → Word</div>
+        <div class="tool-desc">Layout-perfect conversion to .docx preserving fonts and formatting</div>
+        <span class="tool-tag tt-p">CONVERT</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-c"><span style="font-size:20px">≡</span></div>
+        <div class="tool-name">AI Summarizer</div>
+        <div class="tool-desc">4 summary styles — bullet, executive, simple, detailed — in 40+ languages</div>
+        <span class="tool-tag tt-c">AI</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-a"><span style="font-size:20px">✎</span></div>
+        <div class="tool-name">e-Signature</div>
+        <div class="tool-desc">Draw, type or upload signature — legally bind documents instantly</div>
+        <span class="tool-tag tt-a">PDF OPS</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-g"><span style="font-size:20px">⊟</span></div>
+        <div class="tool-name">QR Generator</div>
+        <div class="tool-desc">Generate custom QR codes with logo, colors and tracking analytics</div>
+        <span class="tool-tag tt-g">UTILS</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-a"><span style="font-size:20px">⊕</span></div>
+        <div class="tool-name">Encrypt PDF</div>
+        <div class="tool-desc">AES-256 password protection for sensitive documents</div>
+        <span class="tool-tag tt-a">PDF OPS</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-p"><span style="font-size:20px">🖼</span></div>
+        <div class="tool-name">Image Convert</div>
+        <div class="tool-desc">Convert between JPG, PNG, WebP, HEIC — batch processing supported</div>
+        <span class="tool-tag tt-p">MEDIA</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-c"><span style="font-size:20px">◈</span></div>
+        <div class="tool-name">PDF Analyzer</div>
+        <div class="tool-desc">Deep AI analysis — key points, topics, sentiment, readability score</div>
+        <span class="tool-tag tt-c">AI</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-ico-wrap tw-g"><span style="font-size:20px">📦</span></div>
+        <div class="tool-name">ZIP / Unzip</div>
+        <div class="tool-desc">Compress and extract ZIP, RAR, 7z files — batch operations</div>
+        <span class="tool-tag tt-g">UTILS</span>
+      </div>
+    </div>
+
+    <div class="tools-count-row">
+      <div class="tc-item"><span class="tc-num">16</span>PDF Operations</div>
+      <div class="tc-sep">·</div>
+      <div class="tc-item"><span class="tc-num">13</span>Convert Tools</div>
+      <div class="tc-sep">·</div>
+      <div class="tc-item"><span class="tc-num">6</span>AI Modules</div>
+      <div class="tc-sep">·</div>
+      <div class="tc-item"><span class="tc-num">10</span>Media Tools</div>
+      <div class="tc-sep">·</div>
+      <div class="tc-item"><span class="tc-num">3</span>QR & Barcode</div>
+      <div class="tc-sep">·</div>
+      <div class="tc-item"><span class="tc-num">8</span>Utilities</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AI FEATURES ─── -->
+<section id="ai-features">
+  <div class="section-inner">
+    <div class="section-eyebrow">AI Powered by Claude</div>
+    <h2 class="section-h2">Not just tools —<br><span class="c">intelligent</span> PDF work</h2>
+    <p class="section-sub">Every AI feature powered by Claude Sonnet 4 + GPT-4o fallback. Self-improving and always getting smarter.</p>
+
+    <div class="ai-feat-grid">
+      <!-- Big: Chat -->
+      <div class="ai-feat-card big">
+        <div class="afc-eyebrow">claude-sonnet-4</div>
+        <div class="afc-title">Chat with Any PDF —<br>Get Instant Answers</div>
+        <div class="afc-desc">Upload any PDF and have a full conversation with it. Ask questions, extract data, generate summaries — Claude reads and understands the document like a human expert.</div>
+        <div class="chat-demo">
+          <div class="cdemo-header">
+            <div class="cdemo-ai-ico">AI</div>
+            <span class="cdemo-name">Claude AI — PDF Expert</span>
+            <span class="cdemo-badge">LIVE</span>
+          </div>
+          <div class="chat-bubble-wrap">
+            <div class="cb-user">What are the financial projections for Y3?</div>
+            <div class="cb-ai">Based on page 34, Year 3 targets: <span class="highlight">$10M ARR</span> with 80,000 paying users. Revenue mix: SaaS 70%, AdMob 15%, API 10%, marketplace 5%. This is a 10x growth from Year 1.</div>
+            <div class="cb-user">Translate that into Urdu for me</div>
+            <div class="cb-ai">سال 3 میں ہدف: <span class="highlight">$10M ARR</span> — 80,000 ادا کرنے والے صارفین کے ساتھ۔ آمدنی: SaaS 70٪، AdMob 15٪، API 10٪</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OCR -->
+      <div class="ai-feat-card">
+        <div class="afc-eyebrow">AI-Enhanced OCR</div>
+        <div class="afc-title">98.4% Accuracy<br>Text Extraction</div>
+        <div class="afc-desc">Claude auto-corrects OCR errors. Supports 50+ languages including Urdu, Arabic, and Hindi.</div>
+        <div class="ocr-demo">
+          <div class="ocr-img-side">🖼</div>
+          <div class="ocr-result-side">
+            <div class="ocr-r-label">Extracted Text</div>
+            <div class="ocr-r-lines">
+              <div class="ocr-r-line lit" style="width:95%"></div>
+              <div class="ocr-r-line lit" style="width:82%"></div>
+              <div class="ocr-r-line lit" style="width:90%"></div>
+              <div class="ocr-r-line" style="width:70%"></div>
+              <div class="ocr-r-line lit" style="width:88%"></div>
+            </div>
+            <div class="ocr-conf-badge">✓ 98.4% CONFIDENCE</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Convert -->
+      <div class="ai-feat-card">
+        <div class="afc-eyebrow">13 Conversion Paths</div>
+        <div class="afc-title">PDF ↔ Any Format<br>in Seconds</div>
+        <div class="afc-desc">Pixel-perfect conversion to/from Word, Excel, PPT, Images, HTML — layout always preserved.</div>
+        <div class="convert-demo">
+          <div class="convert-flow">
+            <div class="cf-file">
+              <div class="cf-icon">📄<span style="position:absolute;bottom:4px;right:4px;font-size:7px;background:var(--amber);color:#000;padding:1px 3px;border-radius:2px;font-family:var(--mono);font-weight:700">PDF</span></div>
+              <span class="cf-ext" style="color:var(--amber)">SOURCE</span>
+            </div>
+            <div class="cf-arrow">
+              <div class="cfa-line"><div class="cfa-bar"></div><span class="cfa-head">→</span></div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--t3)">AI Convert</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="cf-file"><div class="cf-icon" style="width:38px;height:44px;font-size:16px">📝</div></div>
+              <div class="cf-file"><div class="cf-icon" style="width:38px;height:44px;font-size:16px">📊</div></div>
+              <div class="cf-file"><div class="cf-icon" style="width:38px;height:44px;font-size:16px">🖼</div></div>
+            </div>
+          </div>
+          <div class="convert-types">
+            <span class="ct-badge ctb-a">DOCX</span>
+            <span class="ct-badge ctb-c">XLSX</span>
+            <span class="ct-badge ctb-g">PPTX</span>
+            <span class="ct-badge ctb-p">JPG</span>
+            <span class="ct-badge ctb-a">HTML</span>
+            <span class="ct-badge ctb-c">TXT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PLATFORM ─── -->
+<section id="platform">
+  <div class="section-inner">
+    <div class="section-eyebrow">Multi-Platform</div>
+    <h2 class="section-h2">Works on<br><span class="a">Android</span> and <span class="c">Web</span></h2>
+    <p class="section-sub">Native Material 3 Android app + installable Web PWA. Sync your files across both platforms seamlessly.</p>
+
+    <div class="platform-grid">
+      <!-- Android -->
+      <div class="platform-card android">
+        <div class="pc-badge pcb-a">◉ Android App</div>
+        <div class="pc-title">Material 3 — Dark + Light Mode</div>
+        <div class="pc-desc">Full-featured native Android app built with Kotlin and Jetpack Compose. Supports Material 3 design system with complete dark/light theme.</div>
+        <div class="pc-features">
+          <div class="pc-feat"><span class="pf-dot pf-a"></span>100+ screens with Material 3 design</div>
+          <div class="pc-feat"><span class="pf-dot pf-a"></span>Full dark / light mode support</div>
+          <div class="pc-feat"><span class="pf-dot pf-a"></span>Offline mode — works without internet</div>
+          <div class="pc-feat"><span class="pf-dot pf-a"></span>AdMob + premium subscription</div>
+          <div class="pc-feat"><span class="pf-dot pf-a"></span>Fastlane auto-deploy to Play Store</div>
+          <div class="pc-feat"><span class="pf-dot pf-a"></span>4.6★ rating · 78K downloads</div>
+        </div>
+        <button class="pc-cta pcc-a">↓ Download from Play Store</button>
+
+        <!-- Phone mockup -->
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <div class="ps-notch"></div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--amber);text-align:center;margin-bottom:8px;letter-spacing:1px">AI PDF TOOLKIT</div>
+              <div class="ps-tool-grid">
+                <div class="ps-tool"><div class="pst-ico">⊞</div><div class="pst-lbl">Merge</div></div>
+                <div class="ps-tool"><div class="pst-ico">⊟</div><div class="pst-lbl">Split</div></div>
+                <div class="ps-tool" style="border-color:var(--cyan3)"><div class="pst-ico">⬡</div><div class="pst-lbl">AI Chat</div></div>
+                <div class="ps-tool" style="border-color:var(--cyan3)"><div class="pst-ico">◎</div><div class="pst-lbl">OCR</div></div>
+                <div class="ps-tool"><div class="pst-ico">⇄</div><div class="pst-lbl">Convert</div></div>
+                <div class="ps-tool"><div class="pst-ico">⊟</div><div class="pst-lbl">QR</div></div>
+                <div class="ps-tool"><div class="pst-ico">📦</div><div class="pst-lbl">ZIP</div></div>
+                <div class="ps-tool"><div class="pst-ico">✦</div><div class="pst-lbl">BG AI</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web PWA -->
+      <div class="platform-card web">
+        <div class="pc-badge pcb-c">◈ Web PWA</div>
+        <div class="pc-title">Next.js 14 — SaaS + PWA</div>
+        <div class="pc-desc">Full-featured web app built with Next.js 14 App Router. Installable as PWA on any device. Drag-and-drop file processing powered by the same AI backend.</div>
+        <div class="pc-features">
+          <div class="pc-feat"><span class="pf-dot pf-c"></span>Next.js 14 + TailwindCSS + shadcn/ui</div>
+          <div class="pc-feat"><span class="pf-dot pf-c"></span>Installable PWA — works offline</div>
+          <div class="pc-feat"><span class="pf-dot pf-c"></span>Drag-and-drop file processing</div>
+          <div class="pc-feat"><span class="pf-dot pf-c"></span>Stripe subscription billing</div>
+          <div class="pc-feat"><span class="pf-dot pf-c"></span>Vercel Edge Network deployment</div>
+          <div class="pc-feat"><span class="pf-dot pf-c"></span>12.8K monthly active users</div>
+        </div>
+        <button class="pc-cta pcc-c">→ Open Web App</button>
+
+        <!-- Browser mockup -->
+        <div class="browser-mockup">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <div class="browser-dots">
+                <div class="bd-dot" style="background:#FF5F57"></div>
+                <div class="bd-dot" style="background:#FEBC2E"></div>
+                <div class="bd-dot" style="background:#28C840"></div>
+              </div>
+              <div class="browser-url">pdftoolkit.nexusultra.com</div>
+            </div>
+            <div class="browser-content">
+              <div class="bc-line" style="width:100%;background:var(--amber2)"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:6px 0">
+                <div style="height:28px;background:var(--s3);border-radius:4px;border:1px solid var(--amber3)"></div>
+                <div style="height:28px;background:var(--s3);border-radius:4px;border:1px solid var(--cyan3)"></div>
+              </div>
+              <div class="bc-line" style="width:90%"></div>
+              <div class="bc-line" style="width:75%"></div>
+              <div class="bc-line" style="width:85%"></div>
+              <div style="margin-top:6px;height:20px;background:var(--amber);border-radius:4px;opacity:.8"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech stack bar -->
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:32px;padding:20px 24px;background:var(--s2);border:1px solid var(--bd);border-radius:16px">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;margin-right:8px">Tech Stack:</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">Kotlin + Jetpack Compose</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">Next.js 14</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">NestJS + Prisma</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--amber)">Claude Sonnet 4</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">PostgreSQL + Redis</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">Docker + K8s</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">Vercel Edge</span>
+      <span style="color:var(--t4)">·</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t2)">Fastlane</span>
+      <a href="https://github.com/nisarllc206-sys/Ai-pdf-super-toolkit-" style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--amber);border:1px solid var(--amber3);padding:4px 12px;border-radius:6px;transition:.12s" onmouseover="this.style.background='var(--amber2)'" onmouseout="this.style.background='transparent'">View on GitHub ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow">Pricing</div>
+    <h2 class="section-h2">Start free.<br><span class="a">Scale as you grow.</span></h2>
+    <p class="section-sub">All plans include Android app + Web PWA access. No credit card needed to start.</p>
+
+    <div class="pricing-toggle">
+      <span class="toggle-label">Monthly</span>
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="toggle-label" style="color:var(--amber)">Annual</span>
+      <span class="save-badge">SAVE 30%</span>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="price-card">
+        <div class="pc-plan">Free</div>
+        <div class="pc-price-wrap">
+          <span class="pc-price">$0</span>
+          <span class="pc-price-period">/month</span>
+        </div>
+        <div class="pc-price-note">Forever free — no credit card</div>
+        <div class="pc-divider"></div>
+        <div class="pc-features-list">
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>20 PDF operations/day</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>50 AI credits/month</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>Basic convert tools</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>QR Generator</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>500MB storage</div>
+          <div class="pc-feat-item" style="opacity:.4"><div class="pfi-check">✗</div>AI Chat — Pro only</div>
+        </div>
+        <button class="btn-price bp-outline">Start for Free</button>
+      </div>
+
+      <!-- Starter -->
+      <div class="price-card">
+        <div class="pc-plan">Starter</div>
+        <div class="pc-price-wrap">
+          <span class="pc-price">$9</span>
+          <span class="pc-price-period">/month</span>
+        </div>
+        <div class="pc-price-note">Or $63/yr — save 30%</div>
+        <div class="pc-divider"></div>
+        <div class="pc-features-list">
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>200 PDF ops/day</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>500 AI credits/month</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>AI PDF Chat (basic)</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>All convert tools</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>5GB storage</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>Ad-free Android</div>
+        </div>
+        <button class="btn-price bp-outline">Get Starter</button>
+      </div>
+
+      <!-- Pro — Featured -->
+      <div class="price-card featured">
+        <div class="popular-badge">★ Most Popular</div>
+        <div class="pc-plan" style="color:var(--amber)">Pro</div>
+        <div class="pc-price-wrap">
+          <span class="pc-price">$29</span>
+          <span class="pc-price-period">/month</span>
+        </div>
+        <div class="pc-price-note">Or $203/yr — save 30%</div>
+        <div class="pc-divider"></div>
+        <div class="pc-features-list">
+          <div class="pc-feat-item"><div class="pfi-check amber-check">✓</div>Unlimited PDF ops</div>
+          <div class="pc-feat-item"><div class="pfi-check amber-check">✓</div>2,000 AI credits/month</div>
+          <div class="pc-feat-item"><div class="pfi-check amber-check">✓</div>Full AI PDF Chat</div>
+          <div class="pc-feat-item"><div class="pfi-check amber-check">✓</div>OCR + AI Analyzer</div>
+          <div class="pc-feat-item"><div class="pfi-check amber-check">✓</div>20GB storage</div>
+          <div class="pc-feat-item"><div class="pfi-check amber-check">✓</div>Priority support</div>
+        </div>
+        <button class="btn-price bp-amber">Get Pro</button>
+      </div>
+
+      <!-- Business -->
+      <div class="price-card">
+        <div class="pc-plan">Business</div>
+        <div class="pc-price-wrap">
+          <span class="pc-price">$79</span>
+          <span class="pc-price-period">/month</span>
+        </div>
+        <div class="pc-price-note">Or $553/yr — save 30%</div>
+        <div class="pc-divider"></div>
+        <div class="pc-features-list">
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>Everything in Pro</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>10,000 AI credits/month</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>API access</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>Team management</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>100GB storage</div>
+          <div class="pc-feat-item"><div class="pfi-check">✓</div>White-label option</div>
+        </div>
+        <button class="btn-price bp-outline">Get Business</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="section-eyebrow">What users say</div>
+    <h2 class="section-h2">Loved by <span class="a">creators</span> and <span class="c">businesses</span></h2>
+
+    <div class="testimonial-grid">
+      <div class="testi-card">
+        <span class="testi-tag tt-android">Android</span>
+        <div class="testi-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testi-quote">The AI PDF Chat is insane — I uploaded our 80-page legal contract and asked Claude specific questions. Got instant answers. Saved me hours of reading.</p>
+        <div class="testi-author">
+          <div class="ta-avatar ta-av-a">AK</div>
+          <div>
+            <div class="ta-name">Ahmed Khan</div>
+            <div class="ta-role">Business Owner, Lahore</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-tag tt-web">Web PWA</span>
+        <div class="testi-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testi-quote">Finally a PDF tool that works on both my Android phone and browser. The OCR accuracy for Urdu text is unmatched — 98% accuracy on handwritten notes.</p>
+        <div class="testi-author">
+          <div class="ta-avatar ta-av-c">SR</div>
+          <div>
+            <div class="ta-name">Sana Raza</div>
+            <div class="ta-role">Freelance Designer, Karachi</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-tag tt-android">Android</span>
+        <div class="testi-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testi-quote">Replaced Adobe Acrobat Pro with this. Merge, compress, sign — everything in one dark-themed Material 3 app. The compress alone saves my business $1,000/yr in storage.</p>
+        <div class="testi-author">
+          <div class="ta-avatar ta-av-g">TM</div>
+          <div>
+            <div class="ta-name">Tariq Mehmood</div>
+            <div class="ta-role">Agency Owner, Islamabad</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section id="cta">
+  <div class="cta-inner">
+    <div class="cta-box">
+      <div class="cta-glow"></div>
+      <h2 class="cta-h2">Start using <span>100+ PDF tools</span><br>for free — today.</h2>
+      <p class="cta-sub">No credit card needed. Download the Android app or open the Web PWA right now.</p>
+      <div class="cta-buttons">
+        <button class="btn-hero-primary">↓ Download Android App — Free</button>
+        <button class="btn-hero-secondary">→ Open Web PWA</button>
+        <a href="https://github.com/nisarllc206-sys/Ai-pdf-super-toolkit-" class="btn-hero-secondary">⌥ GitHub Repo</a>
+        <a href="https://wa.me/923408060167" class="btn-whatsapp" target="_blank" rel="noopener noreferrer">💬 WhatsApp Us</a>
+      </div>
+      <div class="cta-note">
+        <span class="free">✓ Free forever plan</span> &nbsp;·&nbsp;
+        No credit card &nbsp;·&nbsp;
+        Android + Web PWA &nbsp;·&nbsp;
+        100+ tools
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo">
+          <div class="nav-logo-box" style="width:32px;height:32px"><span class="nav-logo-ico">PDF</span></div>
+          <span class="nav-brand" style="font-size:12px">AI<span>.</span>PDF</span>
+        </div>
+        <p class="footer-desc">100+ AI PDF tools on Android and Web. Part of the Nexus Ultra Platforms ecosystem by Muhammad Nisar.</p>
+        <div class="footer-repos">
+          <a href="https://github.com/nisarllc206-sys/Ai-pdf-super-toolkit-" class="repo-link">
+            <span>⌥</span>
+            <code>AI PDF Super Toolkit</code>
+          </a>
+          <a href="https://github.com/nisarllc206-sys/Cloudflaire.-Com" class="repo-link">
+            <span>☁</span>
+            <code>Cloudflare Infrastructure</code>
+          </a>
+          <a href="https://share.google/pYMUf8g9a6I3GE6OT" class="repo-link">
+            <span>📁</span>
+            <code>Google Drive Docs</code>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Tools</div>
+        <ul class="footer-links">
+          <li><a href="#">Merge PDF</a></li>
+          <li><a href="#">Split PDF</a></li>
+          <li><a href="#">Compress PDF</a></li>
+          <li><a href="#">AI PDF Chat</a></li>
+          <li><a href="#">OCR Extract</a></li>
+          <li><a href="#">Convert Tools</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Platform</div>
+        <ul class="footer-links">
+          <li><a href="#">Android App</a></li>
+          <li><a href="#">Web PWA</a></li>
+          <li><a href="#">API Access</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Status</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About Nisar</a></li>
+          <li><a href="#">Nexus Ultra</a></li>
+          <li><a href="https://github.com/nisarllc206-sys">GitHub</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="https://wa.me/923408060167" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+          <li><a href="https://wa.me/message/3A7MFOQTRE2ZL1/" target="_blank" rel="noopener noreferrer">Message Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024–2025 Nexus Ultra Platforms · Muhammad Nisar · All Rights Reserved</div>
+      <div class="footer-tags">
+        <span class="footer-tag">KOTLIN</span>
+        <span class="footer-tag">NEXT.JS 14</span>
+        <span class="footer-tag">NESTJS</span>
+        <span class="footer-tag">CLAUDE AI</span>
+        <span class="footer-tag">MATERIAL 3</span>
+        <span class="footer-tag">DOCKER + K8S</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 50) {
+    nav.style.background = 'rgba(2,4,8,.95)';
+  } else {
+    nav.style.background = 'rgba(2,4,8,.7)';
+  }
+});
+
+// Category chip filter
+document.querySelectorAll('.cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+// Billing toggle
+const toggleTrack = document.querySelector('.toggle-track');
+const toggleThumb = document.querySelector('.toggle-thumb');
+let annual = true;
+toggleTrack.addEventListener('click', () => {
+  annual = !annual;
+  toggleThumb.style.left = annual ? 'auto' : '3px';
+  toggleThumb.style.right = annual ? '3px' : 'auto';
+});
+
+// IntersectionObserver for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.tool-card, .ai-feat-card, .price-card, .testi-card, .platform-card').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = `opacity .5s ${i * 0.06}s ease, transform .5s ${i * 0.06}s ease, border-color .15s, box-shadow .15s`;
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
