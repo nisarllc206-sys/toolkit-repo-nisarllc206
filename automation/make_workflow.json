@@ -1,0 +1,96 @@
+{
+  "name": "AI Toolkit — Daily Content & Auto-Post Workflow",
+  "description": "Runs the Python content generator, appends posts to a Google Sheet, and schedules them to TikTok / Instagram / YouTube Shorts via a social scheduling API.",
+  "trigger": {
+    "type": "schedule",
+    "cron": "0 6 * * *",
+    "label": "Every day at 06:00 (local time)"
+  },
+  "steps": [
+    {
+      "id": 1,
+      "name": "Run AI Content Generator",
+      "module": "http:ActionSendData",
+      "description": "POST to your server or GitHub Actions webhook to execute scripts/content_generator.py",
+      "config": {
+        "url": "{{env.GENERATOR_WEBHOOK_URL}}",
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body": {
+          "count": 30,
+          "output": "posts.csv"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Append Rows to Google Sheet",
+      "module": "google-sheets:ActionAddRow",
+      "description": "Write each generated post row into the 'Content Queue' sheet",
+      "config": {
+        "spreadsheetId": "{{env.GOOGLE_SHEET_ID}}",
+        "sheetName": "Content Queue",
+        "row": {
+          "ID":             "{{1.id}}",
+          "Platform":       "{{1.platform}}",
+          "Caption":        "{{1.caption}}",
+          "ScheduledTime":  "{{1.scheduled_time}}",
+          "Status":         "scheduled",
+          "GumroadLink":    "{{1.gumroad_link}}"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "Schedule TikTok Post",
+      "module": "http:ActionSendData",
+      "description": "Forward caption + scheduled time to your TikTok scheduling integration",
+      "condition": "{{1.platform}} == 'TikTok'",
+      "config": {
+        "url": "{{env.TIKTOK_SCHEDULE_WEBHOOK}}",
+        "method": "POST",
+        "body": {
+          "caption":        "{{1.caption}}",
+          "scheduled_time": "{{1.scheduled_time}}"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "name": "Schedule Instagram Reel",
+      "module": "http:ActionSendData",
+      "description": "Forward caption + scheduled time to your Instagram scheduling integration",
+      "condition": "{{1.platform}} == 'Instagram Reels'",
+      "config": {
+        "url": "{{env.INSTAGRAM_SCHEDULE_WEBHOOK}}",
+        "method": "POST",
+        "body": {
+          "caption":        "{{1.caption}}",
+          "scheduled_time": "{{1.scheduled_time}}"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "name": "Schedule YouTube Short",
+      "module": "http:ActionSendData",
+      "description": "Forward description + scheduled time to your YouTube scheduling integration",
+      "condition": "{{1.platform}} == 'YouTube Shorts'",
+      "config": {
+        "url": "{{env.YOUTUBE_SCHEDULE_WEBHOOK}}",
+        "method": "POST",
+        "body": {
+          "description":    "{{1.caption}}",
+          "scheduled_time": "{{1.scheduled_time}}"
+        }
+      }
+    }
+  ],
+  "environment_variables": {
+    "GENERATOR_WEBHOOK_URL":    "URL of the endpoint that runs content_generator.py",
+    "GOOGLE_SHEET_ID":          "ID of the Google Sheet used as the content queue",
+    "TIKTOK_SCHEDULE_WEBHOOK":  "Webhook URL of your TikTok auto-poster",
+    "INSTAGRAM_SCHEDULE_WEBHOOK": "Webhook URL of your Instagram auto-poster",
+    "YOUTUBE_SCHEDULE_WEBHOOK": "Webhook URL of your YouTube auto-poster"
+  }
+}

@@ -1,0 +1,26 @@
+Subject: 🔥 Your free AI PDF toolkit is ready — plus 3 viral content tips
+
+Hi {{first_name}},
+
+Thanks for grabbing the {{product_name}}! Here are 3 quick tips to
+create viral content with it today:
+
+1. **Use the AI Summariser to save time**
+   Upload any long PDF → get a tweet-ready summary in 10 seconds.
+   Caption idea: "I just summarised a 50-page report with AI in 10 seconds 🤯"
+
+2. **Turn your workflow into a Reel**
+   Record your screen while the AI processes a file.
+   Hook: "Nobody told me AI could do this with PDFs…"
+
+3. **Comment bait that converts**
+   Post before/after screenshots of a PDF edit.
+   Caption: "Comment 'PDF' and I'll send you the free tool 👇"
+
+Ready to upgrade? The Pro version unlocks unlimited AI chatbot requests,
+bulk merge, and priority OCR.
+
+👉 Upgrade here: {{gumroad_upsell_url}}
+
+Talk soon,
+The AI PDF Toolkit Team

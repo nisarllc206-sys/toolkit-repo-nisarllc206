@@ -1,0 +1,61 @@
+{
+  "name": "Auto DM Funnel — New Follower / Comment Trigger",
+  "description": "Sends a personalised Gumroad DM whenever a new follower is gained or a keyword comment is detected on TikTok or Instagram.",
+  "triggers": [
+    {
+      "id": "tiktok_new_follower",
+      "platform": "TikTok",
+      "event": "new_follower",
+      "label": "Someone follows your TikTok account"
+    },
+    {
+      "id": "instagram_new_follower",
+      "platform": "Instagram",
+      "event": "new_follower",
+      "label": "Someone follows your Instagram account"
+    },
+    {
+      "id": "tiktok_keyword_comment",
+      "platform": "TikTok",
+      "event": "new_comment",
+      "keyword_filter": ["AI", "link", "tool", "how", "where", "free"],
+      "label": "A keyword comment is posted on any of your TikTok videos"
+    },
+    {
+      "id": "instagram_keyword_comment",
+      "platform": "Instagram",
+      "event": "new_comment",
+      "keyword_filter": ["AI", "link", "tool", "how", "where", "free"],
+      "label": "A keyword comment is posted on any of your Instagram posts"
+    }
+  ],
+  "actions": [
+    {
+      "id": "send_dm",
+      "name": "Send DM with Gumroad Link",
+      "description": "Immediately send a friendly DM to the user who triggered the event",
+      "message_template": "Hey {{trigger.user.username}} 👋 Thanks for the love! Here's the free AI PDF toolkit I mentioned — grab it here: {{env.GUMROAD_PRODUCT_URL}} 🚀 Let me know if you have questions!",
+      "delay_seconds": 30,
+      "platforms": ["TikTok", "Instagram"]
+    },
+    {
+      "id": "add_to_email_list",
+      "name": "Add to Email Follow-up List",
+      "description": "If the user provided an email (e.g. from a Gumroad purchase), add them to the drip sequence",
+      "module": "mailchimp:addSubscriber",
+      "config": {
+        "list_id": "{{env.MAILCHIMP_LIST_ID}}",
+        "email":   "{{trigger.user.email}}",
+        "tags":    ["dm-funnel", "{{trigger.platform}}"]
+      }
+    }
+  ],
+  "environment_variables": {
+    "GUMROAD_PRODUCT_URL": "https://gumroad.com/l/your-product",
+    "MAILCHIMP_LIST_ID":   "ID of your Mailchimp audience list"
+  },
+  "rate_limits": {
+    "max_dms_per_hour": 20,
+    "cooldown_per_user_hours": 48
+  }
+}
